@@ -157,15 +157,9 @@ public class CustomBeanProcessor implements IBeanProcessor {
 	private boolean isPrimitive(Object value) {
 		boolean result = false;
 		
-		if (value == null) {
-			return result;
-		}
+		result = fieldResolver.isPrimitive(value);
 		
-		Class<? extends Object> beanClass = value.getClass();
-		// TODO date and enum processing
-		if (beanClass.isPrimitive() || value instanceof String || value instanceof Number) {
-			result = true;
-		}
+		
 		
 		return result ;
 	}

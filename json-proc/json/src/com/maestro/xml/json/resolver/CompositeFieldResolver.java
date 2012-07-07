@@ -28,4 +28,19 @@ public class CompositeFieldResolver implements IFieldResolver {
 		return result ;
 	}
 
+	@Override
+	public boolean isPrimitive(Object value) {
+		boolean result = false;
+		
+		if (value == null) {
+			return result;
+		}
+		
+		for (IFieldResolver resolver : resolvers) {
+			result |= resolver.isPrimitive(value);
+		}
+		
+		return result;
+	}
+
 }

@@ -28,4 +28,20 @@ public class PrimitiveFieldResolver implements IFieldResolver {
 		return result;
 	}
 
+	@Override
+	public boolean isPrimitive(Object value) {
+		boolean result = false;
+		if (value == null) {
+			return result ;
+		}
+		
+		Class<? extends Object> beanClass = value.getClass();
+		// TODO date and enum processing
+		if (beanClass.isPrimitive() || value instanceof String || value instanceof Number) {
+			result = true;
+		}
+		
+		return result;
+	}
+
 }
