@@ -49,6 +49,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 					String fieldName = JBeanInfo.getFieldName(attr);
 					if (primitive) {
 						jsonWriter.key(fieldName);
+						value = fieldResolver.convertFromObject(value);
 						jsonWriter.value(value);
 					} else if (value.getClass().isArray() || value instanceof Collection) {
 						Collection items = null;
@@ -114,7 +115,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 
             	Class fieldType = attr.getType();
 				if (primitive) {
-            		value = fieldResolver.convert(fieldType, value);
+            		value = fieldResolver.convertToObject(fieldType, value);
             	} else if (value instanceof JSONObject) {
             		JSONObject jObj = (JSONObject) value;
             		value = deserialize(fieldType, jObj);
