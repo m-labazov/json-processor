@@ -156,12 +156,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 	}
 
 	private boolean isPrimitive(Object value) {
-		boolean result = false;
-		
-		result = fieldResolver.isPrimitive(value);
-		
-		
-		
+		boolean result = fieldResolver.isPrimitive(value);
 		return result ;
 	}
 
