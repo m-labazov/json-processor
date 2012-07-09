@@ -28,6 +28,7 @@ public class JsonTest {
 		
 		List<IFieldResolver> fieldResolvers = new ArrayList<IFieldResolver>();
 		fieldResolvers.add(new PrimitiveFieldResolver());
+		fieldResolvers.add(new SimpleDateFieldResolver("dd.MMM.yyyy"));
 		IFieldResolver fieldRslover = new CompositeFieldResolver(fieldResolvers);
 		
 		IBeanAdapter adapter = XBeanAdapter.getInstance();
@@ -195,6 +196,16 @@ public class JsonTest {
 		assertEquals(car.getModel(), carResult.getModel());
 		assertEquals(car.getName(), carResult.getName());
 		assertEquals(car.getYear(), carResult.getYear());
+	}
+	
+	@Test
+	public void dateEntityProcessingTest() {
+		JDateEntity entity = new JDateEntity();
+		entity.setMonthDate(new Date(0));
+		
+		String json = processor.processBean(entity);
+		
+		System.out.println(json);
 	}
 	
 }

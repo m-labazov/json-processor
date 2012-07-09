@@ -6,7 +6,7 @@ import com.maestro.xml.IFieldResolver;
 public class PrimitiveFieldResolver implements IFieldResolver {
 
 	@Override
-	public Object convert(Class beanClass, Object value) {
+	public Object convertToObject(Class beanClass, Object value) {
 		Object result = null;
 		
 		if (beanClass.equals(String.class)) {
@@ -25,6 +25,34 @@ public class PrimitiveFieldResolver implements IFieldResolver {
 			result = Float.parseFloat(value.toString());
 		}
 		
+		return result;
+	}
+
+	@Override
+	public boolean isPrimitive(Object value) {
+		boolean result = false;
+		if (value == null) {
+			return result ;
+		}
+		
+		Class<? extends Object> beanClass = value.getClass();
+		if (beanClass.isPrimitive() || value instanceof String || value instanceof Number) {
+			result = true;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public String convertFromObject(Object value) {
+		String result = null;
+		if (value == null) {
+			return result ;
+		}
+		boolean primitive = isPrimitive(value);
+		if (primitive) {
+			result = value.toString();
+		}
 		return result;
 	}
 

@@ -14,17 +14,44 @@ public class CompositeFieldResolver implements IFieldResolver {
 	}
 	
 	@Override
-	public Object convert(Class beanClass, Object value) {
+	public Object convertToObject(Class beanClass, Object value) {
 		Object result = null;
 		
 		for (IFieldResolver resolver : resolvers) {
-			result = resolver.convert(beanClass, value);
+			result = resolver.convertToObject(beanClass, value);
 			
 			if (result != null) {
 				break;
 			}
 		}
 		
+		return result ;
+	}
+
+	@Override
+	public boolean isPrimitive(Object value) {
+		boolean result = false;
+		
+		if (value == null) {
+			return result;
+		}
+		
+		for (IFieldResolver resolver : resolvers) {
+			result |= resolver.isPrimitive(value);
+		}
+		
+		return result;
+	}
+
+	@Override
+	public String convertFromObject(Object value) {
+		String result = null;
+		for (IFieldResolver resolver : resolvers) {
+			result = resolver.convertFromObject(value);
+			if (result != null) {
+				break;
+			}
+		}
 		return result ;
 	}
 
