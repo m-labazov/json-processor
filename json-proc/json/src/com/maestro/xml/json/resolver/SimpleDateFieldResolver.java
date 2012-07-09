@@ -3,14 +3,16 @@ package com.maestro.xml.json.resolver;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import com.maestro.xml.IFieldResolver;
 
 @SuppressWarnings("rawtypes")
 public class SimpleDateFieldResolver implements IFieldResolver {
 
-	private static final String CUSTOM_DATE_FORMAT = "dd.MM.yyyy";
-	private static final String CUSTOM_DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm";
+	private static final String DEFAULT_LOCALE = "en_EN";
+	private static final String DEFAULT_DATE_FORMAT = "dd.MM.yyyy";
+	private static final String DEFAULT_DATE_TIME_FORMAT = "dd.MM.yyyy HH:mm";
 	private String pattern;
 	
 	public SimpleDateFieldResolver() {}
@@ -50,10 +52,10 @@ public class SimpleDateFieldResolver implements IFieldResolver {
 		try {
 			if (pattern != null && pattern.length() == textValue.length()) {
 				sdf.applyPattern(pattern);
-			} else if (CUSTOM_DATE_FORMAT.length() == textValue.length()) {
-				sdf.applyPattern(CUSTOM_DATE_FORMAT);
-			} else if (CUSTOM_DATE_TIME_FORMAT.length() == textValue.length()) {
-				sdf.applyPattern(CUSTOM_DATE_TIME_FORMAT);
+			} else if (DEFAULT_DATE_FORMAT.length() == textValue.length()) {
+				sdf.applyPattern(DEFAULT_DATE_FORMAT);
+			} else if (DEFAULT_DATE_TIME_FORMAT.length() == textValue.length()) {
+				sdf.applyPattern(DEFAULT_DATE_TIME_FORMAT);
 			}
 			result = sdf.parse(textValue);
 		} catch (ParseException ex) {}
@@ -61,8 +63,8 @@ public class SimpleDateFieldResolver implements IFieldResolver {
 	}
 
 	private SimpleDateFormat getDateFormat() {
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
-//		simpleDateFormat.toLocalizedPattern();
+		Locale locale = new Locale(DEFAULT_LOCALE);
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("", locale);
 		return simpleDateFormat;
 	}
 
@@ -77,18 +79,17 @@ public class SimpleDateFieldResolver implements IFieldResolver {
 	@Override
 	public String convertFromObject(Object value) {
 		String result = null;
-		if (value == null) {
+		if (value == null || !(value instanceof Date)) {
 			return result;
-		} else if (value instanceof Date) {
-			Date dateValue = (Date) value;
-			SimpleDateFormat sdf = getDateFormat();
-			if (pattern != null && !pattern.isEmpty()) {
-				sdf.applyPattern(pattern);
-			} else {
-				sdf.applyPattern(CUSTOM_DATE_FORMAT);
-			}
-			result = sdf.format(dateValue);
 		}
+		Date dateValue = (Date) value;
+		SimpleDateFormat sdf = getDateFormat();
+		if (pattern != null && !pattern.isEmpty()) {
+			sdf.applyPattern(pattern);
+		} else {
+			sdf.applyPattern(DEFAULT_DATE_FORMAT);
+		}
+		result = sdf.format(dateValue);
 		return result;
 	}
 

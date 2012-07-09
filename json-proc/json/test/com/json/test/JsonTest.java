@@ -200,12 +200,20 @@ public class JsonTest {
 	
 	@Test
 	public void dateEntityProcessingTest() {
+		String jsonResult = "{\"monthDate\":\"01.Jan.1970\"}";
+		String jsonToParse = "{\"monthDate\":\"01.Jan.1970\", \"simpleDate\":\"01.01.1970\", \"timeDate\":\"01.01.1970 00:00\"}";
+		Date defaultDate = new Date(-7200000);
 		JDateEntity entity = new JDateEntity();
-		entity.setMonthDate(new Date(0));
+		entity.setMonthDate(defaultDate);
 		
 		String json = processor.processBean(entity);
+		assertEquals(jsonResult, json);
 		
-		System.out.println(json);
+		JDateEntity result = processor.processJson(JDateEntity.class, jsonToParse);
+		assertEquals(defaultDate, result.getMonthDate());
+		assertEquals(defaultDate, result.getSimpleDate());
+		assertEquals(defaultDate, result.getTimeDate());
+		
 	}
 	
 }
