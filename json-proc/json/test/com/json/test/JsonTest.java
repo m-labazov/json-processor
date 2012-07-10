@@ -29,6 +29,7 @@ public class JsonTest {
 		List<IFieldResolver> fieldResolvers = new ArrayList<IFieldResolver>();
 		fieldResolvers.add(new PrimitiveFieldResolver());
 		fieldResolvers.add(new SimpleDateFieldResolver("dd.MMM.yyyy"));
+		fieldResolvers.add(new EnumFieldResolver());
 		IFieldResolver fieldRslover = new CompositeFieldResolver(fieldResolvers);
 		
 		IBeanAdapter adapter = XBeanAdapter.getInstance();
@@ -213,7 +214,21 @@ public class JsonTest {
 		assertEquals(defaultDate, result.getMonthDate());
 		assertEquals(defaultDate, result.getSimpleDate());
 		assertEquals(defaultDate, result.getTimeDate());
-		
 	}
 	
+	@Test
+	public void enumTest() {
+		JEnumEntity entity = new JEnumEntity();
+		entity.setEnt1(EnumEntity.VAL1);
+		entity.setEnt2(EnumEntity.VAL2);
+		entity.setEnt3(EnumEntity.VAL3);
+		
+		String json = processor.processBean(entity);
+		
+		JEnumEntity result = processor.processJson(JEnumEntity.class, json);
+		
+		assertEquals(entity.getEnt1(), result.getEnt1());
+		assertEquals(entity.getEnt2(), result.getEnt2());
+		assertEquals(entity.getEnt3(), result.getEnt3());
+	}
 }

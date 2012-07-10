@@ -131,7 +131,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
             		for (Object item : jArray) {
             			if (item instanceof JSONObject) {
             				JSONObject jItem = (JSONObject) item;
-            				Class genericFieldClass = Object.class;
+            				Class genericFieldClass = null;
             				if (attr.getGenericType() != null) {
 	            				ParameterizedType fieldParametrization = (ParameterizedType) attr.getGenericType();
 								Type[] actualTypeArguments = fieldParametrization.getActualTypeArguments();
