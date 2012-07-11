@@ -131,7 +131,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
             		for (Object item : jArray) {
             			if (item instanceof JSONObject) {
             				JSONObject jItem = (JSONObject) item;
-            				Class genericFieldClass = Object.class;
+            				Class genericFieldClass = null;
             				if (attr.getGenericType() != null) {
 	            				ParameterizedType fieldParametrization = (ParameterizedType) attr.getGenericType();
 								Type[] actualTypeArguments = fieldParametrization.getActualTypeArguments();
@@ -156,12 +156,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 	}
 
 	private boolean isPrimitive(Object value) {
-		boolean result = false;
-		
-		result = fieldResolver.isPrimitive(value);
-		
-		
-		
+		boolean result = fieldResolver.isPrimitive(value);
 		return result ;
 	}
 

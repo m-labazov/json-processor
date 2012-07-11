@@ -29,6 +29,7 @@ public class JsonTest {
 		List<IFieldResolver> fieldResolvers = new ArrayList<IFieldResolver>();
 		fieldResolvers.add(new PrimitiveFieldResolver());
 		fieldResolvers.add(new SimpleDateFieldResolver("dd.MMM.yyyy"));
+		fieldResolvers.add(new EnumFieldResolver());
 		IFieldResolver fieldRslover = new CompositeFieldResolver(fieldResolvers);
 		
 		IBeanAdapter adapter = XBeanAdapter.getInstance();
@@ -200,12 +201,34 @@ public class JsonTest {
 	
 	@Test
 	public void dateEntityProcessingTest() {
+		String jsonResult = "{\"monthDate\":\"01.Jan.1970\"}";
+		String jsonToParse = "{\"monthDate\":\"01.Jan.1970\", \"simpleDate\":\"01.01.1970\", \"timeDate\":\"01.01.1970 00:00\"}";
+		Date defaultDate = new Date(-7200000);
 		JDateEntity entity = new JDateEntity();
-		entity.setMonthDate(new Date(0));
+		entity.setMonthDate(defaultDate);
+		
+		String json = processor.processBean(entity);
+		assertEquals(jsonResult, json);
+		
+		JDateEntity result = processor.processJson(JDateEntity.class, jsonToParse);
+		assertEquals(defaultDate, result.getMonthDate());
+		assertEquals(defaultDate, result.getSimpleDate());
+		assertEquals(defaultDate, result.getTimeDate());
+	}
+	
+	@Test
+	public void enumTest() {
+		JEnumEntity entity = new JEnumEntity();
+		entity.setEnt1(EnumEntity.VAL1);
+		entity.setEnt2(EnumEntity.VAL2);
+		entity.setEnt3(EnumEntity.VAL3);
 		
 		String json = processor.processBean(entity);
 		
-		System.out.println(json);
+		JEnumEntity result = processor.processJson(JEnumEntity.class, json);
+		
+		assertEquals(entity.getEnt1(), result.getEnt1());
+		assertEquals(entity.getEnt2(), result.getEnt2());
+		assertEquals(entity.getEnt3(), result.getEnt3());
 	}
-	
 }
