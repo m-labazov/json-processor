@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.maestro.xml.json;
+package com.maestro.xml.json.builder;
 
 /*
 Copyright (c) 2002 JSON.org
@@ -45,6 +45,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
+
+import com.maestro.xml.xlog.XLog;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its
@@ -466,9 +468,9 @@ public class JSONObject {
      * @return The object associated with the key.
      * @throws JSONException if the key is not found.
      */
-    public Object get(String key) throws JSONException {
+    public Object get(String key) {
         if (key == null) {
-            throw new JSONException("Null key.");
+            XLog.onError("Can't find \"" + key + "\" attribute in JSON element.");
         }
         Object object = opt(key);
 //        if (object == null) {
@@ -1489,18 +1491,6 @@ public class JSONObject {
         if (value == null) {
             return "null";
         }
-        if (value instanceof JSONString) {
-            Object object;
-            try {
-                object = ((JSONString) value).toJSONString();
-            } catch (Exception e) {
-                throw new JSONException(e);
-            }
-            if (object instanceof String) {
-                return (String) object;
-            }
-            throw new JSONException("Bad value from toJSONString: " + object);
-        }
         if (value instanceof Number) {
             return numberToString((Number) value);
         }
@@ -1543,15 +1533,6 @@ public class JSONObject {
     ) throws JSONException {
         if (value == null) {
             return "null";
-        }
-        try {
-            if (value instanceof JSONString) {
-                Object o = ((JSONString) value).toJSONString();
-                if (o instanceof String) {
-                    return (String) o;
-                }
-            }
-        } catch (Exception ignore) {
         }
         if (value instanceof Number) {
             return numberToString((Number) value);
@@ -1596,7 +1577,7 @@ public class JSONObject {
                 return NULL;
             }
             if (object instanceof JSONObject || object instanceof JSONArray ||
-                    NULL.equals(object) || object instanceof JSONString ||
+                    NULL.equals(object) ||
                     object instanceof Byte || object instanceof Character ||
                     object instanceof Short || object instanceof Integer ||
                     object instanceof Long || object instanceof Boolean ||

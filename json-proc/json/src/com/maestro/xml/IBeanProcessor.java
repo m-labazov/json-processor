@@ -1,6 +1,6 @@
 package com.maestro.xml;
 
-import com.maestro.xml.json.JSONObject;
+import com.maestro.xml.json.builder.JSONObject;
 
 public interface IBeanProcessor {
 

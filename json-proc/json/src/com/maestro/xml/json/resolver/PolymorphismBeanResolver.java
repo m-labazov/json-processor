@@ -5,6 +5,8 @@ import java.util.*;
 
 import com.maestro.xml.IBeanResolver;
 import com.maestro.xml.json.*;
+import com.maestro.xml.json.builder.JSONException;
+import com.maestro.xml.json.builder.JSONObject;
 import com.maestro.xml.xlog.XLog;
 
 @SuppressWarnings("rawtypes")

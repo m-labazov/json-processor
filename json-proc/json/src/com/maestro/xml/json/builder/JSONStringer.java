@@ -1,4 +1,4 @@
-package com.maestro.xml.json;
+package com.maestro.xml.json.builder;
 
 
 /*

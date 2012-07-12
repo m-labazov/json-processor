@@ -4,6 +4,10 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import com.maestro.xml.*;
+import com.maestro.xml.json.builder.JSONArray;
+import com.maestro.xml.json.builder.JSONException;
+import com.maestro.xml.json.builder.JSONObject;
+import com.maestro.xml.json.builder.JSONStringer;
 import com.maestro.xml.xlog.XLog;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -103,10 +107,11 @@ public class CustomBeanProcessor implements IBeanProcessor {
 	@Override
 	public <T> T deserialize(Class<T> beanClass, JSONObject jObject) {
 		JBeanInfo beanInfo = getBeanInfo(beanClass, jObject.toString());
+		beanClass = beanInfo.getBeanClass();
 
 		// Attributes processing
-		try {
-			T bean = (T) beanInfo.getBeanClass().newInstance();
+		T bean = initializeBean(beanClass);
+		if (bean != null) {
 			for (Field attr : beanInfo.getAttrs()) {
             	String fieldName = JBeanInfo.getFieldName(attr);
             	Object value = jObject.get(fieldName);
@@ -121,38 +126,55 @@ public class CustomBeanProcessor implements IBeanProcessor {
             		value = deserialize(fieldType, jObj);
             	} else if (value instanceof JSONArray) {
             		// TODO improve collection/array processing
-            		Collection coll = null;
-            		if (List.class.isAssignableFrom(fieldType)) {
-            			coll = new ArrayList();
-            		} else {
-            			coll = new HashSet();
-            		}
-            		JSONArray jArray = (JSONArray) value;
-            		for (Object item : jArray) {
-            			if (item instanceof JSONObject) {
-            				JSONObject jItem = (JSONObject) item;
-            				Class genericFieldClass = null;
-            				if (attr.getGenericType() != null) {
-	            				ParameterizedType fieldParametrization = (ParameterizedType) attr.getGenericType();
-								Type[] actualTypeArguments = fieldParametrization.getActualTypeArguments();
-								if (actualTypeArguments.length != 0) {
-									genericFieldClass = (Class) actualTypeArguments[0];
-								}
-            				}
-            				Object arrayObj = deserialize(genericFieldClass, jItem);
-            				coll.add(arrayObj);
-            			}
-            		}
-            		value = coll;
+            		value = processArray(attr, value);
             	}
                 adapter.setPropFValue(attr, bean , value);
 			}
-			return bean;
-		} catch (Exception e) {
-			XLog.onError(e, "Can't process attributes for JSONObject");
 		}
+		return bean;
+	}
 
-		return null;
+	private Object processArray(Field attr, Object value) {
+		Class fieldType = attr.getType();
+		Collection coll = initializeBean(fieldType);
+		if (coll == null) {
+			if (List.class.isAssignableFrom(fieldType)) {
+				coll = new ArrayList();
+			} else {
+				coll = new HashSet();
+			}
+		}
+		JSONArray jArray = (JSONArray) value;
+		for (Object item : jArray) {
+			if (item instanceof JSONObject) {
+				JSONObject jItem = (JSONObject) item;
+				Class genericFieldClass = null;
+				if (attr.getGenericType() != null) {
+					ParameterizedType fieldParametrization = (ParameterizedType) attr.getGenericType();
+					Type[] actualTypeArguments = fieldParametrization.getActualTypeArguments();
+					if (actualTypeArguments.length != 0) {
+						genericFieldClass = (Class) actualTypeArguments[0];
+					}
+				}
+				Object arrayObj = deserialize(genericFieldClass, jItem);
+				coll.add(arrayObj);
+			}
+		}
+		value = coll;
+		return value;
+	}
+
+	private <T> T initializeBean(Class<T> fieldType) {
+		T coll = null;
+		if (!fieldType.isInterface() && !Modifier.isAbstract(fieldType.getModifiers())) {
+			try {
+				coll = (T) fieldType.newInstance();
+			} catch (Exception e) {
+				XLog.onError(e, "Can't process attributes for JSONObject");
+			}
+		}
+		
+		return coll;
 	}
 
 	private boolean isPrimitive(Object value) {

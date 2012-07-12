@@ -1,4 +1,4 @@
-package com.maestro.xml.json;
+package com.maestro.xml.json.builder;
 
 /**
  * The JSONException is thrown by the JSON.org classes then things are amiss.

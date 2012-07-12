@@ -1,6 +1,7 @@
 package com.maestro.xml.json;
 
 import com.maestro.xml.IBeanProcessor;
+import com.maestro.xml.json.builder.JSONObject;
 
 
 public class JSONProcessor {

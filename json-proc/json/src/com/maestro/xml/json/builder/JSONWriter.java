@@ -1,4 +1,4 @@
-package com.maestro.xml.json;
+package com.maestro.xml.json.builder;
 
 import java.io.IOException;
 import java.io.Writer;
