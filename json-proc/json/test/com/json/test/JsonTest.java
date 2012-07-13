@@ -118,7 +118,7 @@ public class JsonTest {
 	}
 	
 	@Test
-	public void arrayAttributeTest() {
+	public void collectionAttributeTest() {
 		JDepartment depart = new JDepartment();
 		depart.setName("JSON development department");
 		
@@ -141,14 +141,14 @@ public class JsonTest {
 		
 		assertEquals(depart.getName(), result.getName());
 		
-		assertNotNull(result.getPersons());
+		assertNotNull(result.getPersonList());
 		
-		HashSet<JPerson> resultPersons = result.getPersons();
-		assertEquals(depart.getPersons().size(), resultPersons.size());
+		HashSet<JPerson> resultPersons = result.getPersonList();
+		assertEquals(depart.getPersonList().size(), resultPersons.size());
 		
 		Iterator<JPerson> iterator = resultPersons.iterator();
-		JPerson res_pers1 = iterator.next();
 		JPerson res_pers2 = iterator.next();
+		JPerson res_pers1 = iterator.next();
 		
 		assertEquals(pers1.getFirstName(), res_pers1.getFirstName());
 		assertEquals(pers1.getLastName(), res_pers1.getLastName());
@@ -231,5 +231,46 @@ public class JsonTest {
 		assertEquals(entity.getEnt1(), result.getEnt1());
 		assertEquals(entity.getEnt2(), result.getEnt2());
 		assertEquals(entity.getEnt3(), result.getEnt3());
+	}
+	
+	@Test
+	public void arrayAttributeTest() {
+		JDepartment depart = new JDepartment();
+		depart.setName("JSON development department");
+		
+		JPerson[] persArray = new JPerson[2];		
+		JPerson pers1 = new JPerson();
+		pers1.setFirstName("Max");
+		pers1.setLastName("Avatar");
+		
+		JCar car1 = new JCar();
+		car1.setModel("Nimbula");
+		pers1.setCar(car1);
+		
+		JPerson pers2 = new JPerson();
+		pers2.setFirstName("Avici");
+		persArray[0] = pers1;
+		persArray[1] = pers2;
+		
+		depart.setPersonArray(persArray);
+		
+		String json = processor.processBean(depart);
+		
+		JDepartment result = processor.processJson(JDepartment.class, json);
+		
+		JPerson[] resultArray = result.getPersonArray();
+		assertEquals(2, resultArray.length);
+		
+		JPerson res_pers1 = resultArray[0];
+		JPerson res_pers2 = resultArray[1];
+		
+		assertEquals(pers1.getFirstName(), res_pers1.getFirstName());
+		assertEquals(pers1.getLastName(), res_pers1.getLastName());
+		assertNotNull(res_pers1.getCar());
+		
+		JCar resCar1 = res_pers1.getCar();
+		assertEquals(car1.getModel(), resCar1.getModel());
+		
+		assertEquals(pers2.getFirstName(), res_pers2.getFirstName());
 	}
 }

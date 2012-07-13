@@ -9,7 +9,9 @@ public class JDepartment {
 	@JDomElement
 	private String name;
 	@JDomElement
-	private HashSet<JPerson> persons = new HashSet<JPerson>();
+	private HashSet<JPerson> personList = new HashSet<JPerson>();
+	@JDomElement
+	private JPerson[] personArray;
 	@JDomElement
 	private JPerson jBoss;
 	
@@ -19,21 +21,27 @@ public class JDepartment {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public HashSet<JPerson> getPersons() {
-		return persons;
+	public HashSet<JPerson> getPersonList() {
+		return personList;
 	}
-	public void setPersons(HashSet<JPerson> persons) {
-		this.persons = persons;
+	public void setPersonList(HashSet<JPerson> persons) {
+		this.personList = persons;
 	}
 	
 	public void addPerson(JPerson pers) {
-		persons.add(pers);
+		personList.add(pers);
 	}
 	public JPerson getjBoss() {
 		return jBoss;
 	}
 	public void setjBoss(JPerson jBoss) {
 		this.jBoss = jBoss;
+	}
+	public JPerson[] getPersonArray() {
+		return personArray;
+	}
+	public void setPersonArray(JPerson[] personArray) {
+		this.personArray = personArray;
 	}
 	
 }

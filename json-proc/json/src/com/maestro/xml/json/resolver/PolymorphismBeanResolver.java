@@ -41,7 +41,7 @@ public class PolymorphismBeanResolver implements IBeanResolver {
 				
 				List<Field> attrs = info.getAttrs();
 				for (Field field : attrs) {
-					String fieldName = JBeanInfo.getFieldName(field);
+					String fieldName = JSONProcessorUtil.getFieldName(field);
 					if (names.contains(fieldName)) {
 						equaledFields++;
 					}

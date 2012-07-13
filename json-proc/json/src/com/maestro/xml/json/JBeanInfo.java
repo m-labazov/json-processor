@@ -57,14 +57,6 @@ public class JBeanInfo {
     public void setAttrs(List<Field> attrs) {
         this.attrs = attrs;
     }
-    
-    public static String getFieldName(Field field) {
-    	String fieldName = field.getAnnotation(JDomElement.class).name();
-		if (fieldName == null || fieldName.isEmpty()) {
-			fieldName = field.getName();
-		}
-		return fieldName;
-    }
 
 	public Class getBeanClass() {
 		return beanClass;
