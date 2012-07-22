@@ -1,15 +1,19 @@
 package com.maestro.xml.json;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @SuppressWarnings("rawtypes")
 public class JBeanInfo {
 
     private String name;
     private Class beanClass;
-    private List<Field> attrs = new ArrayList<Field>();
+    private Map<Field, Boolean> attrs = new HashMap<Field, Boolean>();
 
     public JBeanInfo() {
     }
@@ -22,10 +26,10 @@ public class JBeanInfo {
         Iterable<Field> fields = getFields(classDesc);
 
         for (Field field : fields) {
-            Annotation annotation = field.getAnnotation(JDomElement.class);
+        	JDomElement annotation = field.getAnnotation(JDomElement.class);
 
             if (annotation != null) {
-            	attrs.add(field);
+            	attrs.put(field, annotation.stringValue());
             }
         }
         beanClass = classDesc;
@@ -50,12 +54,8 @@ public class JBeanInfo {
         this.name = name;
     }
 
-    public List<Field> getAttrs() {
-        return attrs;
-    }
-
-    public void setAttrs(List<Field> attrs) {
-        this.attrs = attrs;
+    public Collection<Field> getAttrs() {
+        return attrs.keySet();
     }
 
 	public Class getBeanClass() {
@@ -64,6 +64,11 @@ public class JBeanInfo {
 
 	public void setBeanClass(Class beanClass) {
 		this.beanClass = beanClass;
+	}
+
+	public boolean isStringValue(Field field) {
+		boolean result = attrs.get(field);
+		return result ;
 	}
 
 }

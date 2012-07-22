@@ -31,11 +31,11 @@ public interface IBeanAdapter {
     public static final int TYPE_STRING = 17;
     public static final int TYPE_LIST = 18;
 
-    public boolean setAttrFValue(Field field, Object aDest, int opType, String aValue);
+    public boolean setAttrValue(Field field, Object aDest, int opType, String aValue);
 
     public boolean setAttrMValue(Method method, Object aDest, int opType, String aValue);
 
-    public boolean setPropFValue(Field field, Object aDest, Object aValue);
+    public boolean setPropValue(Field field, Object aDest, Object aValue);
 
     public  boolean setPropMValue(Method method, Object aDest, Object aValue);
 

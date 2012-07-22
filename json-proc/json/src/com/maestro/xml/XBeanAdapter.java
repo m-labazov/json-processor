@@ -45,7 +45,7 @@ public class XBeanAdapter implements IBeanAdapter {
      * @return
      */
     @Override
-    public boolean setAttrFValue(Field field, Object aDest, int opType, String aValue) {
+    public boolean setAttrValue(Field field, Object aDest, int opType, String aValue) {
         boolean result = false;
         // set accessible
         boolean oldAccessible = field.isAccessible();
@@ -115,7 +115,7 @@ public class XBeanAdapter implements IBeanAdapter {
      * @return
      */
     @Override
-    public boolean setPropFValue(Field field, Object aDest, Object aValue) {
+    public boolean setPropValue(Field field, Object aDest, Object aValue) {
         boolean result = false;
         // set accessible
         boolean oldAccessible = field.isAccessible();

@@ -1,8 +1,11 @@
 package com.maestro.xml.json;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+
+import com.maestro.xml.xlog.XLog;
 
 public class JSONProcessorUtil {
 
@@ -31,5 +34,17 @@ public class JSONProcessorUtil {
 		}
 		return fieldName;
     }
+    
+    public static <T> T initializeBean(Class<T> fieldType) {
+		T coll = null;
+		if (!fieldType.isInterface() && !Modifier.isAbstract(fieldType.getModifiers())) {
+			try {
+				coll = (T) fieldType.newInstance();
+			} catch (Exception e) {
+				XLog.onError(e, "Can't process attributes for JSONObject");
+			}
+		}
+		return coll;
+	}
 	
 }

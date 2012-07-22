@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface JDomElement {
 
-    String stringArray() default "false";
+    boolean stringValue() default false;
     String name() default "";
 
 }
