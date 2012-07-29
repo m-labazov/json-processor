@@ -13,7 +13,7 @@ public class JBeanInfo {
 
     private String name;
     private Class beanClass;
-    private Map<Field, Boolean> attrs = new HashMap<Field, Boolean>();
+    private Map<Field, JDomElement> attrs = new HashMap<Field, JDomElement>();
 
     public JBeanInfo() {
     }
@@ -29,7 +29,7 @@ public class JBeanInfo {
         	JDomElement annotation = field.getAnnotation(JDomElement.class);
 
             if (annotation != null) {
-            	attrs.put(field, annotation.stringValue());
+            	attrs.put(field, annotation);
             }
         }
         beanClass = classDesc;
@@ -67,8 +67,22 @@ public class JBeanInfo {
 	}
 
 	public boolean isStringValue(Field field) {
-		boolean result = attrs.get(field);
-		return result ;
+		JDomElement beanAnnotation = attrs.get(field);
+		boolean result = beanAnnotation.stringValue();
+		return result;
+	}
+
+	public Field getCdataField() {
+		Field result = null;
+		for (Map.Entry<Field, JDomElement> entry : attrs.entrySet()) {
+			JDomElement beanAnnotation = entry.getValue();
+			boolean cdata = beanAnnotation.cdataField();
+			if (cdata) {
+				result = entry.getKey();
+				break;
+			}
+		}
+		return result;
 	}
 
 }

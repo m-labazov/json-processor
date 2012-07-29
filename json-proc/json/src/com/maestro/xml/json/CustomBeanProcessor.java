@@ -20,6 +20,8 @@ import com.maestro.xml.xlog.XLog;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class CustomBeanProcessor implements IBeanProcessor {
+	
+	// TODO destroy XLog
 
 	private IBeanResolver beanResolver;
 	private IBeanAdapter adapter;
@@ -38,53 +40,54 @@ public class CustomBeanProcessor implements IBeanProcessor {
 		}
 		
 		JSONStringer jsonWriter = new JSONStringer();
-		String result = serialize(bean, jsonWriter);
+		String result = serialize(bean, jsonWriter, false);
 		return result;
 	}
 
-	public String serialize(Object bean, JSONStringer jsonWriter) {
+	public String serialize(Object bean, JSONStringer jsonWriter, boolean stringValue) {
 		if (bean == null) {
 			return null;
 		}
 		try {
-			jsonWriter.object();
-			Class beanClass = bean.getClass();
-			JBeanInfo beanInfo = beanResolver.getBean(beanClass);
-
-			for (Field field : beanInfo.getAttrs()) {
-				Object value = adapter.getPropValue(field, bean);
-				
-				if (value != null) {
-					boolean stringValue = beanInfo.isStringValue(field);
-					boolean primitive = fieldResolver.isPrimitive(value);
-					String fieldName = getFieldName(field);
-					if (stringValue) {
-						writeKey(jsonWriter, fieldName);
-						if (value.getClass().isArray() || value instanceof Collection) {
-							Collection values = getArrayAsCollection(value);
-							for (Object arrayValue : values) {
-								jsonWriter.value(arrayValue);
-							}
-						} else {
-							jsonWriter.value(value);
-						}
-					} else if (primitive) {
-						writeKey(jsonWriter, fieldName);
-						value = fieldResolver.convertFromObject(value);
-						jsonWriter.value(value);
-					} else if (value.getClass().isArray() || value instanceof Collection) {
-						serializeArray(value, fieldName, jsonWriter);
-					} else {
-						writeKey(jsonWriter, fieldName);
-						serialize(value, jsonWriter);
-					}
+			if (stringValue) {
+				// TODO try get value from cdata field
+				jsonWriter.value(bean);
+			} else {
+				jsonWriter.object();
+				Class beanClass = bean.getClass();
+				JBeanInfo beanInfo = beanResolver.getBean(beanClass);
+	
+				for (Field field : beanInfo.getAttrs()) {
+					processField(bean, jsonWriter, beanInfo, field);
 				}
+				jsonWriter.endObject();
 			}
-			jsonWriter.endObject();
 		} catch (Exception e) {
 			XLog.onError(e, "Can't process Bean");
 		}
 		return jsonWriter.toString();
+	}
+
+	private void processField(Object bean, JSONStringer jsonWriter,	JBeanInfo beanInfo, Field field) throws JSONException {
+		Object value = adapter.getPropValue(field, bean);
+		
+		if (value != null) {
+			boolean primitive = fieldResolver.isPrimitive(value);
+			String fieldName = getFieldName(field);
+			boolean stringValue = beanInfo.isStringValue(field);
+			boolean array = value.getClass().isArray() || value instanceof Collection;
+			if (!array) {
+				writeKey(jsonWriter, fieldName);
+			}
+			if (primitive) {
+				value = fieldResolver.convertFromObject(value);
+				jsonWriter.value(value);
+			} else if (array) {
+				serializeArray(value, fieldName, jsonWriter, stringValue);
+			} else {
+				serialize(value, jsonWriter, stringValue);
+			}
+		}
 	}
 
 	@Override
@@ -101,29 +104,40 @@ public class CustomBeanProcessor implements IBeanProcessor {
 
 	@Override
 	public <T> T deserialize(Class<T> beanClass, JSONObject jObject) {
+		T result = deserialize(beanClass, jObject, false);
+		return result ;
+	}
+	
+	public <T> T deserialize(Class<T> beanClass, JSONObject jObject, boolean markedAsString) {
 		JBeanInfo beanInfo = beanResolver.getBean(beanClass, jObject.toString());
 		beanClass = beanInfo.getBeanClass();
 
 		// Attributes processing
-		T bean = JSONProcessorUtil.initializeBean(beanClass);
+		T bean = JsonProcessorUtil.initializeBean(beanClass);
+		if (markedAsString) {
+			Field cdataField = beanInfo.getCdataField();
+//			adapter.setPropValue(cdataField, bean, value);
+			return bean;
+		}
 		if (bean != null) {
 			for (Field field : beanInfo.getAttrs()) {
             	String fieldName = getFieldName(field);
             	Object value = jObject.get(fieldName);
             	
             	boolean primitive = fieldResolver.isPrimitive(value);
+            	boolean stringField = beanInfo.isStringValue(field);
 
             	Class fieldType = field.getType();
-				if (primitive) {
+				if (primitive && !stringField) {
             		value = fieldResolver.convertToObject(fieldType, value);
             	} else if (value instanceof JSONObject) {
             		JSONObject jObj = (JSONObject) value;
-            		value = deserialize(fieldType, jObj);
+            		value = deserialize(fieldType, jObj, stringField);
             	} else if (value instanceof JSONArray) {
             		JSONArray jArray = (JSONArray) value;
-            		value = deserializeArray(field, jArray);
+            		value = deserializeArray(field, jArray, stringField);
             	}
-                adapter.setPropValue(field, bean , value);
+                adapter.setPropValue(field, bean, value);
 			}
 		}
 		return bean;
@@ -131,7 +145,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 
 	protected String getFieldName(Field attr) {
 		// TODO decoding
-		String fieldName = JSONProcessorUtil.getFieldName(attr);
+		String fieldName = JsonProcessorUtil.getFieldName(attr);
 		return fieldName;
 	}
 	
@@ -141,7 +155,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 	}
 	
 	
-	protected void serializeArray(Object value, String fieldName, JSONStringer jsonWriter) throws JSONException {
+	protected void serializeArray(Object value, String fieldName, JSONStringer jsonWriter, boolean stringValue) throws JSONException {
 		Collection items = getArrayAsCollection(value);
 		if (items.isEmpty()) {
 			return;
@@ -153,7 +167,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 			if (itemPrimitive) {
 				jsonWriter.value(item.toString());
 			} else {
-				serialize(item, jsonWriter);
+				serialize(item, jsonWriter, stringValue);
 			}
 		}
 		jsonWriter.endArray();
@@ -170,15 +184,15 @@ public class CustomBeanProcessor implements IBeanProcessor {
 		return items;
 	}
 
-	protected Object deserializeArray(Field attr, JSONArray jArray) {
+	protected Object deserializeArray(Field attr, JSONArray jArray, boolean markedAsString) {
 		Object result = null;
 		Class fieldType = attr.getType();
 		ArrayList listToFill = new ArrayList();
-		Class genericFieldClass = (Class) JSONProcessorUtil.getGenericTypes(attr);
+		Class genericFieldClass = (Class) JsonProcessorUtil.getGenericTypes(attr);
 		for (Object item : jArray) {
 			if (item instanceof JSONObject) {
 				JSONObject jItem = (JSONObject) item;
-				Object arrayObj = deserialize(genericFieldClass, jItem);
+				Object arrayObj = deserialize(genericFieldClass, jItem, markedAsString);
 				listToFill.add(arrayObj);
 			}
 			// TODO primitive types setting
@@ -188,7 +202,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 			Object[] newInstance = (Object[]) Array.newInstance(genericFieldClass, jArray.length());
 			result = listToFill.toArray(newInstance);
 		} else {
-			Collection coll = JSONProcessorUtil.initializeBean(fieldType);
+			Collection coll = JsonProcessorUtil.initializeBean(fieldType);
 			// TODO need to improve (if it's not standard collection interface)
 			if (coll == null) {
 				if (List.class.isAssignableFrom(fieldType)) {
@@ -202,5 +216,4 @@ public class CustomBeanProcessor implements IBeanProcessor {
 		}
 		return result;
 	}
-
 }

@@ -7,9 +7,9 @@ import java.lang.reflect.Type;
 
 import com.maestro.xml.xlog.XLog;
 
-public class JSONProcessorUtil {
+public class JsonProcessorUtil {
 
-	private JSONProcessorUtil() {}
+	private JsonProcessorUtil() {}
 	
 	public static Type getGenericTypes(Field attr) {
 		Class<?> genericFieldClass = null;

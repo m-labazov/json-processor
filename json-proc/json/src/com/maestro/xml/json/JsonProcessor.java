@@ -4,14 +4,14 @@ import com.maestro.xml.IBeanProcessor;
 import com.maestro.xml.json.builder.JSONObject;
 
 
-public class JSONProcessor {
+public class JsonProcessor {
     
     private IBeanProcessor beanProcessor;
 
     /**
      * Constructor
      */
-    public JSONProcessor(IBeanProcessor beanProcessor) {
+    public JsonProcessor(IBeanProcessor beanProcessor) {
     	this.beanProcessor = beanProcessor;
     }
 

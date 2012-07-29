@@ -13,14 +13,14 @@ import com.maestro.xml.json.resolver.*;
 
 public class JsonTest {
 
-	JSONProcessor processor;
+	JsonProcessor processor;
 	
 	@Before
 	public void init() {
 		processor = getProcessor();
 	}
 	
-	private JSONProcessor getProcessor() {
+	private JsonProcessor getProcessor() {
 		List<IBeanResolver> beanResolvers = new ArrayList<IBeanResolver>();
 		beanResolvers.add(new PolymorphismBeanResolver());
 		beanResolvers.add(new SimpleBeanResolver());
@@ -35,7 +35,7 @@ public class JsonTest {
 		IBeanAdapter adapter = XBeanAdapter.getInstance();
 		IBeanProcessor beanProcessor = new CustomBeanProcessor(beanResolver, adapter, fieldRslover);
 		
-		JSONProcessor processor = new JSONProcessor(beanProcessor);
+		JsonProcessor processor = new JsonProcessor(beanProcessor);
 		return processor;
 	}
 	
@@ -272,5 +272,54 @@ public class JsonTest {
 		assertEquals(car1.getModel(), resCar1.getModel());
 		
 		assertEquals(pers2.getFirstName(), res_pers2.getFirstName());
+	}
+	
+	@Test
+	public void textElementTest() {
+		JArrayEntity entity = new JArrayEntity();
+		JStringEntity stringEntity = new JStringEntity("qqq", "www");
+		entity.setEntity(stringEntity);
+		
+		JStringEntity[] array = new JStringEntity[3];
+		JStringEntity stringEntity2 = new JStringEntity("aaa", "sss");
+		JStringEntity stringEntity3 = new JStringEntity("fff", "ddd");
+		JStringEntity stringEntity4 = new JStringEntity("ggg", "hhh");
+		array[0] = stringEntity2;
+		array[1] = stringEntity3;
+		array[2] = stringEntity4;
+		entity.setArray(array);
+		
+		List<JStringEntity> collection = new ArrayList<JStringEntity>();
+		JStringEntity stringEntity5 = new JStringEntity("zzz", "xxx");
+		JStringEntity stringEntity6 = new JStringEntity("ccc", "vvv");
+		JStringEntity stringEntity7 = new JStringEntity("bbb", "nnn");
+		collection.add(stringEntity5);
+		collection.add(stringEntity6);
+		collection.add(stringEntity7);
+		entity.setCollection(collection);
+		
+		String json = processor.processBean(entity);
+		
+		JArrayEntity result = processor.processJson(JArrayEntity.class, json);
+		
+		List<JStringEntity> resultCollection = result.getCollection();
+		assertNotNull(resultCollection);
+		assertEquals(3, resultCollection.size());
+		assertEquals(stringEntity5.getStr2(), resultCollection.get(0).getStr2());
+		assertEquals(stringEntity6.getStr2(), resultCollection.get(1).getStr2());
+		assertEquals(stringEntity7.getStr2(), resultCollection.get(2).getStr2());
+		
+		JStringEntity[] resultArray = result.getArray();
+		assertNotNull(resultArray);
+		assertEquals(3, resultArray.length);
+		assertEquals(stringEntity2.getStr2(), resultArray[0].getStr2());
+		assertEquals(stringEntity3.getStr2(), resultArray[1].getStr2());
+		assertEquals(stringEntity4.getStr2(), resultArray[2].getStr2());
+		
+		JStringEntity resultEntity = result.getEntity();
+		assertNotNull(resultEntity);
+		assertEquals(stringEntity.getStr2(), resultEntity.getStr2());
+		
+		
 	}
 }
