@@ -39,6 +39,7 @@ public class JsonProcessorUtil {
 		T coll = null;
 		if (!fieldType.isInterface() && !Modifier.isAbstract(fieldType.getModifiers())) {
 			try {
+				// TODO what is about entities without default constructor
 				coll = (T) fieldType.newInstance();
 			} catch (Exception e) {
 				XLog.onError(e, "Can't process attributes for JSONObject");

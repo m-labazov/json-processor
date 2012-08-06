@@ -9,7 +9,7 @@ public class JDepartment {
 	@JDomElement
 	private String name;
 	@JDomElement
-	private HashSet<JPerson> personList = new HashSet<JPerson>();
+	private ArrayList<JPerson> personList = new ArrayList<JPerson>();
 	@JDomElement
 	private JPerson[] personArray;
 	@JDomElement
@@ -21,10 +21,10 @@ public class JDepartment {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public HashSet<JPerson> getPersonList() {
+	public ArrayList<JPerson> getPersonList() {
 		return personList;
 	}
-	public void setPersonList(HashSet<JPerson> persons) {
+	public void setPersonList(ArrayList<JPerson> persons) {
 		this.personList = persons;
 	}
 	

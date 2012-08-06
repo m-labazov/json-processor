@@ -143,12 +143,12 @@ public class JsonTest {
 		
 		assertNotNull(result.getPersonList());
 		
-		HashSet<JPerson> resultPersons = result.getPersonList();
+		ArrayList<JPerson> resultPersons = result.getPersonList();
 		assertEquals(depart.getPersonList().size(), resultPersons.size());
 		
 		Iterator<JPerson> iterator = resultPersons.iterator();
-		JPerson res_pers2 = iterator.next();
 		JPerson res_pers1 = iterator.next();
+		JPerson res_pers2 = iterator.next();
 		
 		assertEquals(pers1.getFirstName(), res_pers1.getFirstName());
 		assertEquals(pers1.getLastName(), res_pers1.getLastName());

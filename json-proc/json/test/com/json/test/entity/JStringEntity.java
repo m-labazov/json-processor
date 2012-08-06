@@ -9,6 +9,8 @@ public class JStringEntity {
 	@JDomElement(cdataField = true)
 	private String str2;
 	
+	public JStringEntity() {}
+	
 	public JStringEntity(String string, String string2) {
 		str1 = string;
 		str2 = string2;

@@ -114,11 +114,6 @@ public class CustomBeanProcessor implements IBeanProcessor {
 
 		// Attributes processing
 		T bean = JsonProcessorUtil.initializeBean(beanClass);
-		if (markedAsString) {
-			Field cdataField = beanInfo.getCdataField();
-//			adapter.setPropValue(cdataField, bean, value);
-			return bean;
-		}
 		if (bean != null) {
 			for (Field field : beanInfo.getAttrs()) {
             	String fieldName = getFieldName(field);
@@ -128,7 +123,11 @@ public class CustomBeanProcessor implements IBeanProcessor {
             	boolean stringField = beanInfo.isStringValue(field);
 
             	Class fieldType = field.getType();
-				if (primitive && !stringField) {
+            	if (stringField && !(value instanceof JSONArray)) {
+            		JBeanInfo stringBeanInfo = beanResolver.getBean(fieldType);
+            		Field fieldForStringValue = stringBeanInfo.getCdataField();
+					value = injectStringField(fieldType, fieldForStringValue , value.toString());
+            	} else if (primitive && !stringField) {
             		value = fieldResolver.convertToObject(fieldType, value);
             	} else if (value instanceof JSONObject) {
             		JSONObject jObj = (JSONObject) value;
@@ -143,6 +142,16 @@ public class CustomBeanProcessor implements IBeanProcessor {
 		return bean;
 	}
 
+	protected <T> T injectStringField(Class<T> beanClass, Field field, String value) {
+		if (field == null) {
+			// TODO add throw exception
+			return null;
+		}
+		T bean = JsonProcessorUtil.initializeBean(beanClass);
+		adapter.setPropValue(field, bean, value);
+		return bean;
+	}
+	
 	protected String getFieldName(Field attr) {
 		// TODO decoding
 		String fieldName = JsonProcessorUtil.getFieldName(attr);
@@ -190,11 +199,17 @@ public class CustomBeanProcessor implements IBeanProcessor {
 		ArrayList listToFill = new ArrayList();
 		Class genericFieldClass = (Class) JsonProcessorUtil.getGenericTypes(attr);
 		for (Object item : jArray) {
+			Object arrayObj = null;
 			if (item instanceof JSONObject) {
 				JSONObject jItem = (JSONObject) item;
-				Object arrayObj = deserialize(genericFieldClass, jItem, markedAsString);
-				listToFill.add(arrayObj);
+				arrayObj = deserialize(genericFieldClass, jItem, markedAsString);
+			} else if (item instanceof String) {
+				String stringItem = (String)item;
+				JBeanInfo beanInfo = beanResolver.getBean(genericFieldClass);;
+				Field stringField = beanInfo.getCdataField();
+				arrayObj = injectStringField(genericFieldClass, stringField , stringItem);
 			}
+			listToFill.add(arrayObj);
 			// TODO primitive types setting
 		}
 		boolean isArray = fieldType.isArray();
