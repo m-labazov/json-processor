@@ -1,12 +1,12 @@
 package com.json.test.entity;
 
-import com.maestro.xml.json.JDomElement;
+import com.maestro.xml.json.JsonElement;
 
 public class JDetailPerson extends JPerson {
 
-	@JDomElement
+	@JsonElement
 	private String surName;
-	@JDomElement
+	@JsonElement
 	private int year;
 	
 	public String getSurName() {

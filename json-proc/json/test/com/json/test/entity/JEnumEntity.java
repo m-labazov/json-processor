@@ -1,14 +1,14 @@
 package com.json.test.entity;
 
-import com.maestro.xml.json.JDomElement;
+import com.maestro.xml.json.JsonElement;
 
 public class JEnumEntity {
 
-	@JDomElement
+	@JsonElement
 	private EnumEntity ent1;
-	@JDomElement
+	@JsonElement
 	private EnumEntity ent2;
-	@JDomElement
+	@JsonElement
 	private EnumEntity ent3;
 	public EnumEntity getEnt1() {
 		return ent1;

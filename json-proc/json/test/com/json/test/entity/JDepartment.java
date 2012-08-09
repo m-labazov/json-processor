@@ -2,17 +2,17 @@ package com.json.test.entity;
 
 import java.util.*;
 
-import com.maestro.xml.json.JDomElement;
+import com.maestro.xml.json.JsonElement;
 
 public class JDepartment {
 	
-	@JDomElement
+	@JsonElement
 	private String name;
-	@JDomElement
+	@JsonElement
 	private ArrayList<JPerson> personList = new ArrayList<JPerson>();
-	@JDomElement
+	@JsonElement
 	private JPerson[] personArray;
-	@JDomElement
+	@JsonElement
 	private JPerson jBoss;
 	
 	public String getName() {

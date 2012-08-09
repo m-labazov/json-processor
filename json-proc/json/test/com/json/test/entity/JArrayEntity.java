@@ -2,16 +2,16 @@ package com.json.test.entity;
 
 import java.util.List;
 
-import com.maestro.xml.json.JDomElement;
+import com.maestro.xml.json.JsonElement;
 
 
 public class JArrayEntity {
 
-	@JDomElement(stringValue = true)
+	@JsonElement(stringValue = true)
 	private List<JStringEntity> collection;
-	@JDomElement(stringValue = true)
+	@JsonElement(stringValue = true)
 	private JStringEntity[] array;
-	@JDomElement(stringValue = true)
+	@JsonElement(stringValue = true)
 	private JStringEntity entity;
 	
 	public List<JStringEntity> getCollection() {

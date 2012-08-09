@@ -1,34 +1,34 @@
 package com.json.test.entity;
 
-import com.maestro.xml.json.JDomElement;
+import com.maestro.xml.json.JsonElement;
 
 public class JPrimitiveEntity {
 
-	@JDomElement
+	@JsonElement
 	private int i;
-	@JDomElement
+	@JsonElement
 	private Integer in;
-	@JDomElement
+	@JsonElement
 	private long l;
-	@JDomElement
+	@JsonElement
 	private Long lon;
-	@JDomElement
+	@JsonElement
 	private short s;
-	@JDomElement
+	@JsonElement
 	private Short sho;
-	@JDomElement
+	@JsonElement
 	private byte b;
-	@JDomElement
+	@JsonElement
 	private Byte by;
-	@JDomElement
+	@JsonElement
 	private double d;
-	@JDomElement
+	@JsonElement
 	private Double doub;
-	@JDomElement
+	@JsonElement
 	private float f;
-	@JDomElement
+	@JsonElement
 	private Float flo;
-	@JDomElement
+	@JsonElement
 	private String text;
 	
 	public int getI() {

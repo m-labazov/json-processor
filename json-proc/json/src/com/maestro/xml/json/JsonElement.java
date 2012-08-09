@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
-public @interface JDomElement {
+public @interface JsonElement {
 	/**
 	 * Defines if the field, marked with this annotation, is written in JSON as a string
 	 * @return

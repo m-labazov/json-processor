@@ -2,15 +2,15 @@ package com.json.test.entity;
 
 import java.util.Date;
 
-import com.maestro.xml.json.JDomElement;
+import com.maestro.xml.json.JsonElement;
 
 public class JDateEntity {
 
-	@JDomElement
+	@JsonElement
 	private Date simpleDate;
-	@JDomElement
+	@JsonElement
 	private Date monthDate;
-	@JDomElement
+	@JsonElement
 	private Date timeDate;
 	public Date getSimpleDate() {
 		return simpleDate;

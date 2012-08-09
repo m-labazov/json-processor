@@ -1,30 +1,33 @@
 package com.maestro.xml.json.resolver;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import com.maestro.xml.IBeanInfo;
 import com.maestro.xml.IBeanResolver;
 import com.maestro.xml.JsonException;
-import com.maestro.xml.json.JBeanInfo;
+import com.maestro.xml.json.JsonBeanInfo;
 
 @SuppressWarnings("rawtypes")
 public class CompositeBeanResolver implements IBeanResolver {
 
 	private List<IBeanResolver> resolvers;
-	private Map<Class, JBeanInfo> beanInfos;
+	private Map<Class, IBeanInfo> beanInfos;
 	
 	public CompositeBeanResolver(List<IBeanResolver> resolvers) {
-		beanInfos = new HashMap<Class, JBeanInfo>();
+		beanInfos = new HashMap<Class, IBeanInfo>();
 		setResolvers(resolvers);
 	}
 	
 	@Override
-	public JBeanInfo getBean(Class beanClass) throws JsonException {
+	public IBeanInfo getBean(Class beanClass) throws JsonException {
 		return getBean(beanClass, null);
 	}
 
 	@Override
-	public JBeanInfo getBean(Class beanClass, String json) throws JsonException {
-		JBeanInfo result = null;
+	public IBeanInfo getBean(Class beanClass, String json) throws JsonException {
+		IBeanInfo result = null;
 		
 		for (IBeanResolver resolver : resolvers) {
 			result = resolver.getBean(beanClass, json);
@@ -40,17 +43,17 @@ public class CompositeBeanResolver implements IBeanResolver {
 		return result ;
 	}
 
-	protected JBeanInfo addBeanInfo(Class beanClass) {
-		JBeanInfo result = null;
+	protected JsonBeanInfo addBeanInfo(Class beanClass) {
+		JsonBeanInfo result = null;
 		if (!beanInfos.containsKey(beanClass)) {
-			result = new JBeanInfo(beanClass);
+			result = new JsonBeanInfo(beanClass);
 			beanInfos.put(beanClass, result);
 		}
 		return result;
 	}
 
 	@Override
-	public void setInfos(Map<Class, JBeanInfo> infos) {
+	public void setInfos(Map<Class, IBeanInfo> infos) {
 		this.beanInfos = infos;
 
 	}

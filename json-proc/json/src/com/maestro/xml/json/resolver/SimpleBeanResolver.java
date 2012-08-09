@@ -2,27 +2,27 @@ package com.maestro.xml.json.resolver;
 
 import java.util.Map;
 
+import com.maestro.xml.IBeanInfo;
 import com.maestro.xml.IBeanResolver;
-import com.maestro.xml.json.JBeanInfo;
 
 @SuppressWarnings("rawtypes")
 public class SimpleBeanResolver implements IBeanResolver {
 
-	private Map<Class, JBeanInfo> beanInfos;
+	private Map<Class, IBeanInfo> beanInfos;
 	
 	@Override
-	public JBeanInfo getBean(Class beanClass) {
+	public IBeanInfo getBean(Class beanClass) {
 		return getBean(beanClass, null);
 	}
 
 	@Override
-	public JBeanInfo getBean(Class beanClass, String json) {
-		JBeanInfo result = beanInfos.get(beanClass);
+	public IBeanInfo getBean(Class beanClass, String json) {
+		IBeanInfo result = beanInfos.get(beanClass);
 		return result;
 	}
 
 	@Override
-	public void setInfos(Map<Class, JBeanInfo> infos) {
+	public void setInfos(Map<Class, IBeanInfo> infos) {
 		this.beanInfos = infos;
 	}
 

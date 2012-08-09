@@ -1,12 +1,12 @@
 package com.json.test.entity;
 
-import com.maestro.xml.json.JDomElement;
+import com.maestro.xml.json.JsonElement;
 
 public class JStringEntity {
 
-	@JDomElement
+	@JsonElement
 	private String str1;
-	@JDomElement(cdataField = true)
+	@JsonElement(cdataField = true)
 	private String str2;
 	
 	public JStringEntity() {}

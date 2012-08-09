@@ -8,17 +8,19 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.maestro.xml.IBeanInfo;
+
 @SuppressWarnings("rawtypes")
-public class JBeanInfo {
+public class JsonBeanInfo implements IBeanInfo {
 
     private String name;
     private Class beanClass;
-    private Map<Field, JDomElement> attrs = new HashMap<Field, JDomElement>();
+    private Map<Field, JsonElement> attrs = new HashMap<Field, JsonElement>();
 
-    public JBeanInfo() {
+    public JsonBeanInfo() {
     }
 
-    public JBeanInfo(Class classDesc) {
+    public JsonBeanInfo(Class classDesc) {
         initBean(classDesc);
     }
 
@@ -26,7 +28,7 @@ public class JBeanInfo {
         Iterable<Field> fields = getFields(classDesc);
 
         for (Field field : fields) {
-        	JDomElement annotation = field.getAnnotation(JDomElement.class);
+        	JsonElement annotation = field.getAnnotation(JsonElement.class);
 
             if (annotation != null) {
             	attrs.put(field, annotation);
@@ -54,11 +56,13 @@ public class JBeanInfo {
         this.name = name;
     }
 
+    @Override
     public Collection<Field> getAttrs() {
         return attrs.keySet();
     }
 
-	public Class getBeanClass() {
+    @Override
+	public Class<?> getBeanClass() {
 		return beanClass;
 	}
 
@@ -66,16 +70,18 @@ public class JBeanInfo {
 		this.beanClass = beanClass;
 	}
 
+	@Override
 	public boolean isStringValue(Field field) {
-		JDomElement beanAnnotation = attrs.get(field);
+		JsonElement beanAnnotation = attrs.get(field);
 		boolean result = beanAnnotation.stringValue();
 		return result;
 	}
 
+	@Override
 	public Field getCdataField() {
 		Field result = null;
-		for (Map.Entry<Field, JDomElement> entry : attrs.entrySet()) {
-			JDomElement beanAnnotation = entry.getValue();
+		for (Map.Entry<Field, JsonElement> entry : attrs.entrySet()) {
+			JsonElement beanAnnotation = entry.getValue();
 			boolean cdata = beanAnnotation.cdataField();
 			if (cdata) {
 				result = entry.getKey();

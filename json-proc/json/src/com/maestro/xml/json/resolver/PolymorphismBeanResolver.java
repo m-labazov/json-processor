@@ -7,30 +7,31 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.maestro.xml.IBeanInfo;
 import com.maestro.xml.IBeanResolver;
 import com.maestro.xml.JsonException;
-import com.maestro.xml.json.JBeanInfo;
+import com.maestro.xml.json.JsonBeanInfo;
 import com.maestro.xml.json.JsonProcessorUtil;
 import com.maestro.xml.json.builder.JsonObject;
 
 @SuppressWarnings("rawtypes")
 public class PolymorphismBeanResolver implements IBeanResolver {
 
-	private Map<Class, JBeanInfo> beanInfos;
+	private Map<Class, IBeanInfo> beanInfos;
 	
 	@Override
-	public JBeanInfo getBean(Class beanClass) {
+	public JsonBeanInfo getBean(Class beanClass) {
 		return null;
 	}
 
 	@Override
-	public JBeanInfo getBean(Class beanClass, String json) throws JsonException {
+	public IBeanInfo getBean(Class beanClass, String json) throws JsonException {
 		if (json == null || json.isEmpty()) {
 			return null;
 		}
 		
-		List<JBeanInfo> relatedInfos = getRelatedBeanInfos(beanClass);
-		JBeanInfo result = null;
+		List<IBeanInfo> relatedInfos = getRelatedBeanInfos(beanClass);
+		IBeanInfo result = null;
 		
 		JsonObject obj = new JsonObject(json);
 		
@@ -39,7 +40,7 @@ public class PolymorphismBeanResolver implements IBeanResolver {
 		
 		int maxEqualedFields = 0;
 		
-		for (JBeanInfo info : relatedInfos) {
+		for (IBeanInfo info : relatedInfos) {
 			int equaledFields = 0;
 			
 			Collection<Field> attrs = info.getAttrs();
@@ -67,10 +68,10 @@ public class PolymorphismBeanResolver implements IBeanResolver {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected List<JBeanInfo> getRelatedBeanInfos(Class beanClass) {
-		List<JBeanInfo> relatedInfos = new ArrayList<JBeanInfo>();
+	protected List<IBeanInfo> getRelatedBeanInfos(Class beanClass) {
+		List<IBeanInfo> relatedInfos = new ArrayList<IBeanInfo>();
 		
-		for (Map.Entry<Class, JBeanInfo> entry : beanInfos.entrySet()) {
+		for (Map.Entry<Class, IBeanInfo> entry : beanInfos.entrySet()) {
 			if (beanClass.isAssignableFrom(entry.getKey())) {
 				relatedInfos.add(entry.getValue());
 			}
@@ -80,7 +81,7 @@ public class PolymorphismBeanResolver implements IBeanResolver {
 	}
 
 	@Override
-	public void setInfos(Map<Class, JBeanInfo> infos) {
+	public void setInfos(Map<Class, IBeanInfo> infos) {
 		this.beanInfos = infos;
 	}
 

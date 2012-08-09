@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.maestro.xml.IBeanAdapter;
+import com.maestro.xml.IBeanInfo;
 import com.maestro.xml.IBeanProcessor;
 import com.maestro.xml.IBeanResolver;
 import com.maestro.xml.IFieldResolver;
@@ -53,7 +54,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 		} else {
 			jsonWriter.object();
 			Class beanClass = bean.getClass();
-			JBeanInfo beanInfo = beanResolver.getBean(beanClass);
+			IBeanInfo beanInfo = beanResolver.getBean(beanClass);
 
 			for (Field field : beanInfo.getAttrs()) {
 				processField(bean, jsonWriter, beanInfo, field);
@@ -63,7 +64,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 		return jsonWriter.toString();
 	}
 
-	private void processField(Object bean, JsonStringer jsonWriter,	JBeanInfo beanInfo, Field field) throws JsonException {
+	private void processField(Object bean, JsonStringer jsonWriter,	IBeanInfo beanInfo, Field field) throws JsonException {
 		Object value = adapter.getPropValue(field, bean);
 		
 		if (value != null) {
@@ -99,8 +100,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 	}
 	
 	public <T> T deserialize(Class<T> beanClass, JsonObject jObject, boolean markedAsString) throws JsonException {
-		JBeanInfo beanInfo = beanResolver.getBean(beanClass, jObject.toString());
-		beanClass = beanInfo.getBeanClass();
+		IBeanInfo beanInfo = beanResolver.getBean(beanClass, jObject.toString());
 
 		// Attributes processing
 		T bean = JsonProcessorUtil.initializeBean(beanClass);
@@ -114,7 +114,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 
             	Class fieldType = field.getType();
             	if (stringField && !(value instanceof JsonArray)) {
-            		JBeanInfo stringBeanInfo = beanResolver.getBean(fieldType);
+            		IBeanInfo stringBeanInfo = beanResolver.getBean(fieldType);
             		Field fieldForStringValue = stringBeanInfo.getCdataField();
 					value = injectStringField(fieldType, fieldForStringValue , value.toString());
             	} else if (primitive && !stringField) {
@@ -195,7 +195,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 				arrayObj = deserialize(genericFieldClass, jItem, markedAsString);
 			} else if (item instanceof String) {
 				String stringItem = (String)item;
-				JBeanInfo beanInfo = beanResolver.getBean(genericFieldClass);;
+				IBeanInfo beanInfo = beanResolver.getBean(genericFieldClass);;
 				Field stringField = beanInfo.getCdataField();
 				arrayObj = injectStringField(genericFieldClass, stringField , stringItem);
 			}

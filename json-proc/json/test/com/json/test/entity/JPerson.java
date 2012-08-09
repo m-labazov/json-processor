@@ -1,14 +1,14 @@
 package com.json.test.entity;
 
-import com.maestro.xml.json.JDomElement;
+import com.maestro.xml.json.JsonElement;
 
 public class JPerson {
 
-	@JDomElement
+	@JsonElement
 	private String firstName;
-	@JDomElement
+	@JsonElement
 	private String lastName;
-	@JDomElement
+	@JsonElement
 	private JCar car;
 	
 	public String getFirstName() {

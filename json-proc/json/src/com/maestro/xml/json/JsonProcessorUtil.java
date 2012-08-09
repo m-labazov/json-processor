@@ -28,7 +28,7 @@ public class JsonProcessorUtil {
 	}
 
     public static String getFieldName(Field field) {
-    	String fieldName = field.getAnnotation(JDomElement.class).name();
+    	String fieldName = field.getAnnotation(JsonElement.class).name();
 		if (fieldName == null || fieldName.isEmpty()) {
 			fieldName = field.getName();
 		}

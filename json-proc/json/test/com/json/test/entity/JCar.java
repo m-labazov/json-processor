@@ -1,14 +1,14 @@
 package com.json.test.entity;
 
-import com.maestro.xml.json.JDomElement;
+import com.maestro.xml.json.JsonElement;
 
 public class JCar {
 
-	@JDomElement
+	@JsonElement
 	private String name;
-	@JDomElement
+	@JsonElement
 	private String model;
-	@JDomElement
+	@JsonElement
 	private int year;
 	
 	public String getName() {
