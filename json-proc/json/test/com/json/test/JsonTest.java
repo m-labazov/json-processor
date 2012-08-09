@@ -13,14 +13,14 @@ import com.maestro.xml.json.resolver.*;
 
 public class JsonTest {
 
-	JsonProcessor processor;
+	IBeanProcessor processor;
 	
 	@Before
 	public void init() {
 		processor = getProcessor();
 	}
 	
-	private JsonProcessor getProcessor() {
+	private IBeanProcessor getProcessor() {
 		List<IBeanResolver> beanResolvers = new ArrayList<IBeanResolver>();
 		beanResolvers.add(new PolymorphismBeanResolver());
 		beanResolvers.add(new SimpleBeanResolver());
@@ -35,8 +35,7 @@ public class JsonTest {
 		IBeanAdapter adapter = XBeanAdapter.getInstance();
 		IBeanProcessor beanProcessor = new CustomBeanProcessor(beanResolver, adapter, fieldRslover);
 		
-		JsonProcessor processor = new JsonProcessor(beanProcessor);
-		return processor;
+		return beanProcessor;
 	}
 	
 	@Test
@@ -70,9 +69,9 @@ public class JsonTest {
 		entity.setSho(sho);
 		entity.setText(text);
 		
-		String json = processor.processBean(entity);
+		String json = processor.serialize(entity);
 		
-		JPrimitiveEntity result = processor.processJson(JPrimitiveEntity.class, json);
+		JPrimitiveEntity result = processor.deserialize(JPrimitiveEntity.class, json);
 		
 		assertEquals(entity.getB(), result.getB());
 		assertEquals(entity.getBy(), result.getBy());
@@ -101,9 +100,9 @@ public class JsonTest {
 		car.setYear(2013);
 		person.setCar(car);
 		
-		String json = processor.processBean(person);
+		String json = processor.serialize(person);
 		
-		JPerson result = processor.processJson(JPerson.class, json);
+		JPerson result = processor.deserialize(JPerson.class, json);
 		
 		assertEquals(person.getFirstName(), result.getFirstName());
 		assertEquals(person.getLastName(), result.getLastName());
@@ -135,9 +134,9 @@ public class JsonTest {
 		pers2.setFirstName("Avici");
 		depart.addPerson(pers2);
 		
-		String json = processor.processBean(depart);
+		String json = processor.serialize(depart);
 		
-		JDepartment result = processor.processJson(JDepartment.class, json);
+		JDepartment result = processor.deserialize(JDepartment.class, json);
 		
 		assertEquals(depart.getName(), result.getName());
 		
@@ -179,9 +178,9 @@ public class JsonTest {
 		
 		depart.setjBoss(person);
 		
-		String json = processor.processBean(depart);
+		String json = processor.serialize(depart);
 		
-		JDepartment resultDep = processor.processJson(JDepartment.class, json);
+		JDepartment resultDep = processor.deserialize(JDepartment.class, json);
 		
 		assertEquals(depart.getName(), resultDep.getName());
 		
@@ -208,10 +207,10 @@ public class JsonTest {
 		JDateEntity entity = new JDateEntity();
 		entity.setMonthDate(defaultDate);
 		
-		String json = processor.processBean(entity);
+		String json = processor.serialize(entity);
 		assertEquals(jsonResult, json);
 		
-		JDateEntity result = processor.processJson(JDateEntity.class, jsonToParse);
+		JDateEntity result = processor.deserialize(JDateEntity.class, jsonToParse);
 		assertEquals(defaultDate, result.getMonthDate());
 		assertEquals(defaultDate, result.getSimpleDate());
 		assertEquals(defaultDate, result.getTimeDate());
@@ -224,9 +223,9 @@ public class JsonTest {
 		entity.setEnt2(EnumEntity.VAL2);
 		entity.setEnt3(EnumEntity.VAL3);
 		
-		String json = processor.processBean(entity);
+		String json = processor.serialize(entity);
 		
-		JEnumEntity result = processor.processJson(JEnumEntity.class, json);
+		JEnumEntity result = processor.deserialize(JEnumEntity.class, json);
 		
 		assertEquals(entity.getEnt1(), result.getEnt1());
 		assertEquals(entity.getEnt2(), result.getEnt2());
@@ -254,9 +253,9 @@ public class JsonTest {
 		
 		depart.setPersonArray(persArray);
 		
-		String json = processor.processBean(depart);
+		String json = processor.serialize(depart);
 		
-		JDepartment result = processor.processJson(JDepartment.class, json);
+		JDepartment result = processor.deserialize(JDepartment.class, json);
 		
 		JPerson[] resultArray = result.getPersonArray();
 		assertEquals(2, resultArray.length);
@@ -298,9 +297,9 @@ public class JsonTest {
 		collection.add(stringEntity7);
 		entity.setCollection(collection);
 		
-		String json = processor.processBean(entity);
+		String json = processor.serialize(entity);
 		
-		JArrayEntity result = processor.processJson(JArrayEntity.class, json);
+		JArrayEntity result = processor.deserialize(JArrayEntity.class, json);
 		
 		List<JStringEntity> resultCollection = result.getCollection();
 		assertNotNull(resultCollection);
