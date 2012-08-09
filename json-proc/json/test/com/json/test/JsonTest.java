@@ -40,7 +40,7 @@ public class JsonTest {
 	}
 	
 	@Test
-	public void primitiveAttributeTest() {
+	public void primitiveAttributeTest() throws JsonException {
 		byte b = 1;
 		Byte by = 2;
 		double d = 3.;
@@ -90,7 +90,7 @@ public class JsonTest {
 	}
 	
 	@Test
-	public void beanAttributeTest() {
+	public void beanAttributeTest() throws JsonException {
 		JPerson person = new JPerson();
 		person.setFirstName("Anjiii");
 		person.setLastName("O'Callahan");
@@ -118,7 +118,7 @@ public class JsonTest {
 	}
 	
 	@Test
-	public void collectionAttributeTest() {
+	public void collectionAttributeTest() throws JsonException {
 		JDepartment depart = new JDepartment();
 		depart.setName("JSON development department");
 		
@@ -161,7 +161,7 @@ public class JsonTest {
 	}
 	
 	@Test
-	public void polymorphismTest() {
+	public void polymorphismTest() throws JsonException {
 		JDepartment depart = new JDepartment();
 		depart.setName("JSON development department");
 		
@@ -201,7 +201,7 @@ public class JsonTest {
 	}
 	
 	@Test
-	public void dateEntityProcessingTest() {
+	public void dateEntityProcessingTest() throws JsonException {
 		String jsonResult = "{\"monthDate\":\"01.Jan.1970\"}";
 		String jsonToParse = "{\"monthDate\":\"01.Jan.1970\", \"simpleDate\":\"01.01.1970\", \"timeDate\":\"01.01.1970 00:00\"}";
 		Date defaultDate = new Date(-7200000);
@@ -218,7 +218,7 @@ public class JsonTest {
 	}
 	
 	@Test
-	public void enumTest() {
+	public void enumTest() throws JsonException {
 		JEnumEntity entity = new JEnumEntity();
 		entity.setEnt1(EnumEntity.VAL1);
 		entity.setEnt2(EnumEntity.VAL2);
@@ -234,7 +234,7 @@ public class JsonTest {
 	}
 	
 	@Test
-	public void arrayAttributeTest() {
+	public void arrayAttributeTest() throws JsonException {
 		JDepartment depart = new JDepartment();
 		depart.setName("JSON development department");
 		
@@ -275,7 +275,7 @@ public class JsonTest {
 	}
 	
 	@Test
-	public void textElementTest() {
+	public void textElementTest() throws JsonException {
 		JArrayEntity entity = new JArrayEntity();
 		JStringEntity stringEntity = new JStringEntity("qqq", "www");
 		entity.setEntity(stringEntity);

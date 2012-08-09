@@ -1,4 +1,4 @@
-package com.maestro.xml.json.builder;
+package com.maestro.xml;
 
 /**
  * The JSONException is thrown by the JSON.org classes then things are amiss.
@@ -7,7 +7,7 @@ package com.maestro.xml.json.builder;
  * @version 3
  */
 @SuppressWarnings("serial")
-public class JSONException extends Exception {
+public class JsonException extends Exception {
     private Throwable cause;
 
     /**
@@ -15,11 +15,16 @@ public class JSONException extends Exception {
      *
      * @param message Detail about the reason for the exception.
      */
-    public JSONException(String message) {
+    public JsonException(String message) {
         super(message);
     }
+    
+    public JsonException(String message, Throwable cause) {
+    	super(message);
+    	this.cause = cause;
+    }
 
-    public JSONException(Throwable t) {
+    public JsonException(Throwable t) {
         super(t.getMessage());
         this.cause = t;
     }

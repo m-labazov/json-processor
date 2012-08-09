@@ -3,6 +3,7 @@ package com.maestro.xml.json.resolver;
 import java.util.*;
 
 import com.maestro.xml.IBeanResolver;
+import com.maestro.xml.JsonException;
 import com.maestro.xml.json.JBeanInfo;
 
 @SuppressWarnings("rawtypes")
@@ -17,12 +18,12 @@ public class CompositeBeanResolver implements IBeanResolver {
 	}
 	
 	@Override
-	public JBeanInfo getBean(Class beanClass) {
+	public JBeanInfo getBean(Class beanClass) throws JsonException {
 		return getBean(beanClass, null);
 	}
 
 	@Override
-	public JBeanInfo getBean(Class beanClass, String json) {
+	public JBeanInfo getBean(Class beanClass, String json) throws JsonException {
 		JBeanInfo result = null;
 		
 		for (IBeanResolver resolver : resolvers) {

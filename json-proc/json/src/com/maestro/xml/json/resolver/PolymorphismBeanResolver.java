@@ -1,13 +1,17 @@
 package com.maestro.xml.json.resolver;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import com.maestro.xml.IBeanResolver;
-import com.maestro.xml.json.*;
-import com.maestro.xml.json.builder.JSONException;
-import com.maestro.xml.json.builder.JSONObject;
-import com.maestro.xml.xlog.XLog;
+import com.maestro.xml.JsonException;
+import com.maestro.xml.json.JBeanInfo;
+import com.maestro.xml.json.JsonProcessorUtil;
+import com.maestro.xml.json.builder.JsonObject;
 
 @SuppressWarnings("rawtypes")
 public class PolymorphismBeanResolver implements IBeanResolver {
@@ -20,7 +24,7 @@ public class PolymorphismBeanResolver implements IBeanResolver {
 	}
 
 	@Override
-	public JBeanInfo getBean(Class beanClass, String json) {
+	public JBeanInfo getBean(Class beanClass, String json) throws JsonException {
 		if (json == null || json.isEmpty()) {
 			return null;
 		}
@@ -28,43 +32,37 @@ public class PolymorphismBeanResolver implements IBeanResolver {
 		List<JBeanInfo> relatedInfos = getRelatedBeanInfos(beanClass);
 		JBeanInfo result = null;
 		
-		try {
-			JSONObject obj = new JSONObject(json);
+		JsonObject obj = new JsonObject(json);
+		
+		String[] namesArray = JsonObject.getNames(obj);
+		List<String> names = Arrays.asList(namesArray);
+		
+		int maxEqualedFields = 0;
+		
+		for (JBeanInfo info : relatedInfos) {
+			int equaledFields = 0;
 			
-			String[] namesArray = JSONObject.getNames(obj);
-			List<String> names = Arrays.asList(namesArray);
-			
-			int maxEqualedFields = 0;
-			
-			for (JBeanInfo info : relatedInfos) {
-				int equaledFields = 0;
-				
-				Collection<Field> attrs = info.getAttrs();
-				for (Field field : attrs) {
-					String fieldName = JsonProcessorUtil.getFieldName(field);
-					if (names.contains(fieldName)) {
-						equaledFields++;
-					}
-				}
-				
-				if (equaledFields == names.size()) {
-					if (names.size() == attrs.size()) {
-						result = info;
-						break;
-					} else {
-						maxEqualedFields = equaledFields;
-						result = info;
-					}
-				} else if (equaledFields > maxEqualedFields) {
-					result = info;
-					maxEqualedFields = equaledFields;
+			Collection<Field> attrs = info.getAttrs();
+			for (Field field : attrs) {
+				String fieldName = JsonProcessorUtil.getFieldName(field);
+				if (names.contains(fieldName)) {
+					equaledFields++;
 				}
 			}
 			
-		} catch (JSONException e) {
-			XLog.onError(e, "Can't process Bean");
+			if (equaledFields == names.size()) {
+				if (names.size() == attrs.size()) {
+					result = info;
+					break;
+				} else {
+					maxEqualedFields = equaledFields;
+					result = info;
+				}
+			} else if (equaledFields > maxEqualedFields) {
+				result = info;
+				maxEqualedFields = equaledFields;
+			}
 		}
-		
 		return result;
 	}
 

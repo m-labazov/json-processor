@@ -1,7 +1,8 @@
 package com.maestro.xml.json;
 
 import com.maestro.xml.IBeanProcessor;
-import com.maestro.xml.json.builder.JSONObject;
+import com.maestro.xml.JsonException;
+import com.maestro.xml.json.builder.JsonObject;
 
 
 public class JsonProcessor {
@@ -16,17 +17,17 @@ public class JsonProcessor {
     }
 
 
-    public String processBean(Object bean) {
+    public String processBean(Object bean) throws JsonException {
     	String result = beanProcessor.serialize(bean);
     	return result;
     }
 
-    public <T> T processJson(Class<T> bean, String json) {
+    public <T> T processJson(Class<T> bean, String json) throws JsonException {
     	T result = beanProcessor.deserialize(bean, json);
     	return result;
     }
 
-    public <T> T processJson(Class<T> bean, JSONObject jObject) {
+    public <T> T processJson(Class<T> bean, JsonObject jObject) throws JsonException {
     	T result = beanProcessor.deserialize(bean, jObject);
     	return result;
     }

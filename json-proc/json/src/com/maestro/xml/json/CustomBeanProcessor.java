@@ -12,11 +12,10 @@ import com.maestro.xml.IBeanAdapter;
 import com.maestro.xml.IBeanProcessor;
 import com.maestro.xml.IBeanResolver;
 import com.maestro.xml.IFieldResolver;
-import com.maestro.xml.json.builder.JSONArray;
-import com.maestro.xml.json.builder.JSONException;
-import com.maestro.xml.json.builder.JSONObject;
-import com.maestro.xml.json.builder.JSONStringer;
-import com.maestro.xml.xlog.XLog;
+import com.maestro.xml.JsonException;
+import com.maestro.xml.json.builder.JsonArray;
+import com.maestro.xml.json.builder.JsonObject;
+import com.maestro.xml.json.builder.JsonStringer;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class CustomBeanProcessor implements IBeanProcessor {
@@ -34,41 +33,37 @@ public class CustomBeanProcessor implements IBeanProcessor {
 	}
 	
 	@Override
-	public String serialize(Object bean) {
+	public String serialize(Object bean) throws JsonException {
 		if (bean == null) {
 			return null;
 		}
 		
-		JSONStringer jsonWriter = new JSONStringer();
+		JsonStringer jsonWriter = new JsonStringer();
 		String result = serialize(bean, jsonWriter, false);
 		return result;
 	}
 
-	public String serialize(Object bean, JSONStringer jsonWriter, boolean stringValue) {
+	public String serialize(Object bean, JsonStringer jsonWriter, boolean stringValue) throws JsonException {
 		if (bean == null) {
 			return null;
 		}
-		try {
-			if (stringValue) {
-				// TODO try get value from cdata field
-				jsonWriter.value(bean);
-			} else {
-				jsonWriter.object();
-				Class beanClass = bean.getClass();
-				JBeanInfo beanInfo = beanResolver.getBean(beanClass);
-	
-				for (Field field : beanInfo.getAttrs()) {
-					processField(bean, jsonWriter, beanInfo, field);
-				}
-				jsonWriter.endObject();
+		if (stringValue) {
+			// TODO try get value from cdata field
+			jsonWriter.value(bean);
+		} else {
+			jsonWriter.object();
+			Class beanClass = bean.getClass();
+			JBeanInfo beanInfo = beanResolver.getBean(beanClass);
+
+			for (Field field : beanInfo.getAttrs()) {
+				processField(bean, jsonWriter, beanInfo, field);
 			}
-		} catch (Exception e) {
-			XLog.onError(e, "Can't process Bean");
+			jsonWriter.endObject();
 		}
 		return jsonWriter.toString();
 	}
 
-	private void processField(Object bean, JSONStringer jsonWriter,	JBeanInfo beanInfo, Field field) throws JSONException {
+	private void processField(Object bean, JsonStringer jsonWriter,	JBeanInfo beanInfo, Field field) throws JsonException {
 		Object value = adapter.getPropValue(field, bean);
 		
 		if (value != null) {
@@ -91,24 +86,19 @@ public class CustomBeanProcessor implements IBeanProcessor {
 	}
 
 	@Override
-	public <T> T deserialize(Class<T> beanClass, String json) {
-		try {
-			JSONObject jsonObject = new JSONObject(json);
-			T result = deserialize(beanClass, jsonObject);
-			return result ;
-		} catch (JSONException e) {
-			XLog.onError(e, "Can't process attributes for JSONObject");
-		}
-		return null;
+	public <T> T deserialize(Class<T> beanClass, String json) throws JsonException {
+		JsonObject jsonObject = new JsonObject(json);
+		T result = deserialize(beanClass, jsonObject);
+		return result ;
 	}
 
 	@Override
-	public <T> T deserialize(Class<T> beanClass, JSONObject jObject) {
+	public <T> T deserialize(Class<T> beanClass, JsonObject jObject) throws JsonException {
 		T result = deserialize(beanClass, jObject, false);
 		return result ;
 	}
 	
-	public <T> T deserialize(Class<T> beanClass, JSONObject jObject, boolean markedAsString) {
+	public <T> T deserialize(Class<T> beanClass, JsonObject jObject, boolean markedAsString) throws JsonException {
 		JBeanInfo beanInfo = beanResolver.getBean(beanClass, jObject.toString());
 		beanClass = beanInfo.getBeanClass();
 
@@ -123,17 +113,17 @@ public class CustomBeanProcessor implements IBeanProcessor {
             	boolean stringField = beanInfo.isStringValue(field);
 
             	Class fieldType = field.getType();
-            	if (stringField && !(value instanceof JSONArray)) {
+            	if (stringField && !(value instanceof JsonArray)) {
             		JBeanInfo stringBeanInfo = beanResolver.getBean(fieldType);
             		Field fieldForStringValue = stringBeanInfo.getCdataField();
 					value = injectStringField(fieldType, fieldForStringValue , value.toString());
             	} else if (primitive && !stringField) {
             		value = fieldResolver.convertToObject(fieldType, value);
-            	} else if (value instanceof JSONObject) {
-            		JSONObject jObj = (JSONObject) value;
+            	} else if (value instanceof JsonObject) {
+            		JsonObject jObj = (JsonObject) value;
             		value = deserialize(fieldType, jObj, stringField);
-            	} else if (value instanceof JSONArray) {
-            		JSONArray jArray = (JSONArray) value;
+            	} else if (value instanceof JsonArray) {
+            		JsonArray jArray = (JsonArray) value;
             		value = deserializeArray(field, jArray, stringField);
             	}
                 adapter.setPropValue(field, bean, value);
@@ -142,7 +132,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 		return bean;
 	}
 
-	protected <T> T injectStringField(Class<T> beanClass, Field field, String value) {
+	protected <T> T injectStringField(Class<T> beanClass, Field field, String value) throws JsonException {
 		if (field == null) {
 			// TODO add throw exception
 			return null;
@@ -158,13 +148,13 @@ public class CustomBeanProcessor implements IBeanProcessor {
 		return fieldName;
 	}
 	
-	protected void writeKey(JSONStringer jsonWriter, String fieldName) throws JSONException {
+	protected void writeKey(JsonStringer jsonWriter, String fieldName) throws JsonException {
 		// TODO decoding
 		jsonWriter.key(fieldName);
 	}
 	
 	
-	protected void serializeArray(Object value, String fieldName, JSONStringer jsonWriter, boolean stringValue) throws JSONException {
+	protected void serializeArray(Object value, String fieldName, JsonStringer jsonWriter, boolean stringValue) throws JsonException {
 		Collection items = getArrayAsCollection(value);
 		if (items.isEmpty()) {
 			return;
@@ -193,15 +183,15 @@ public class CustomBeanProcessor implements IBeanProcessor {
 		return items;
 	}
 
-	protected Object deserializeArray(Field attr, JSONArray jArray, boolean markedAsString) {
+	protected Object deserializeArray(Field attr, JsonArray jArray, boolean markedAsString) throws JsonException {
 		Object result = null;
 		Class fieldType = attr.getType();
 		ArrayList listToFill = new ArrayList();
 		Class genericFieldClass = (Class) JsonProcessorUtil.getGenericTypes(attr);
 		for (Object item : jArray) {
 			Object arrayObj = null;
-			if (item instanceof JSONObject) {
-				JSONObject jItem = (JSONObject) item;
+			if (item instanceof JsonObject) {
+				JsonObject jItem = (JsonObject) item;
 				arrayObj = deserialize(genericFieldClass, jItem, markedAsString);
 			} else if (item instanceof String) {
 				String stringItem = (String)item;

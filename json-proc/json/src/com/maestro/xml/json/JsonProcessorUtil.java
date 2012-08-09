@@ -5,7 +5,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-import com.maestro.xml.xlog.XLog;
+import com.maestro.xml.JsonException;
 
 public class JsonProcessorUtil {
 
@@ -35,14 +35,14 @@ public class JsonProcessorUtil {
 		return fieldName;
     }
     
-    public static <T> T initializeBean(Class<T> fieldType) {
+    public static <T> T initializeBean(Class<T> fieldType) throws JsonException {
 		T coll = null;
 		if (!fieldType.isInterface() && !Modifier.isAbstract(fieldType.getModifiers())) {
 			try {
 				// TODO what is about entities without default constructor
 				coll = (T) fieldType.newInstance();
 			} catch (Exception e) {
-				XLog.onError(e, "Can't process attributes for JSONObject");
+				throw new JsonException("Can't initialize bean with default constructor.", e);
 			}
 		}
 		return coll;

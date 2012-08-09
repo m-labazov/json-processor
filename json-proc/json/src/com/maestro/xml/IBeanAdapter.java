@@ -31,20 +31,20 @@ public interface IBeanAdapter {
     public static final int TYPE_STRING = 17;
     public static final int TYPE_LIST = 18;
 
-    public boolean setAttrValue(Field field, Object aDest, int opType, String aValue);
+    public boolean setAttrValue(Field field, Object aDest, int opType, String aValue) throws JsonException;
 
-    public boolean setAttrMValue(Method method, Object aDest, int opType, String aValue);
+    public boolean setAttrMValue(Method method, Object aDest, int opType, String aValue) throws JsonException;
 
-    public boolean setPropValue(Field field, Object aDest, Object aValue);
+    public boolean setPropValue(Field field, Object aDest, Object aValue) throws JsonException;
 
-    public  boolean setPropMValue(Method method, Object aDest, Object aValue);
+    public  boolean setPropMValue(Method method, Object aDest, Object aValue) throws JsonException;
 
-    public Object getPropValue(Field field, Object aDest);
+    public Object getPropValue(Field field, Object aDest) throws JsonException;
 
 
     public String getTypeAsDTD(int type);
 
-    public int getTypeFor(Class opType);
+    public int getTypeFor(Class<?> opType);
 
 
 }

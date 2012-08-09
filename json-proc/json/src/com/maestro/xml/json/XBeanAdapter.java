@@ -1,9 +1,10 @@
-package com.maestro.xml;
-
-import com.maestro.xml.xlog.XLog;
+package com.maestro.xml.json;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import com.maestro.xml.IBeanAdapter;
+import com.maestro.xml.JsonException;
 
 /**
  * <p>Title: XBeanAdapter </p>
@@ -43,16 +44,17 @@ public class XBeanAdapter implements IBeanAdapter {
      * @param opType
      * @param aValue
      * @return
+     * @throws JsonException 
      */
     @Override
-    public boolean setAttrValue(Field field, Object aDest, int opType, String aValue) {
+    public boolean setAttrValue(Field field, Object aDest, int opType, String aValue) throws JsonException {
         boolean result = false;
         // set accessible
         boolean oldAccessible = field.isAccessible();
         if (!oldAccessible) try {
             field.setAccessible(true);
         } catch (Exception e) {
-            XLog.onError(e, "Can't set accessible for " + field.getName());
+            throw new JsonException("Can't set accessible for " + field.getName(), e);
         }
         // set value
         try {
@@ -96,7 +98,7 @@ public class XBeanAdapter implements IBeanAdapter {
             }
             result = true;
         } catch (Exception e) {
-            XLog.onError(e, "Can't set '" + field.getName() + "' attribute to value: " + aValue);
+        	throw new JsonException("Can't set '" + field.getName() + "' attribute to value: " + aValue, e);
         }
         // restore accessible
         if ((!oldAccessible) && field.isAccessible()) {
@@ -113,23 +115,24 @@ public class XBeanAdapter implements IBeanAdapter {
      * @param aDest
      * @param aValue
      * @return
+     * @throws JsonException 
      */
     @Override
-    public boolean setPropValue(Field field, Object aDest, Object aValue) {
+    public boolean setPropValue(Field field, Object aDest, Object aValue) throws JsonException {
         boolean result = false;
         // set accessible
         boolean oldAccessible = field.isAccessible();
         if (!oldAccessible) try {
             field.setAccessible(true);
         } catch (Exception e) {
-            XLog.onError(e, "Can't set accessible for " + field.getName());
+        	throw new JsonException("Can't set accessible for " + field.getName(), e);
         }
         // set value
         try {
             field.set(aDest, aValue);
             result = true;
         } catch (Exception e) {
-            XLog.onError(e, "Can't set '" + field.getName() + "' attribute to value: " + aValue);
+        	throw new JsonException("Can't set '" + field.getName() + "' attribute to value: " + aValue, e);
         }
         // restore accessible
         if ((!oldAccessible) && field.isAccessible()) {
@@ -147,23 +150,24 @@ public class XBeanAdapter implements IBeanAdapter {
      * @param aDest
      * @param aValue
      * @return
+     * @throws JsonException 
      */
     @Override
-    public boolean setPropMValue(Method method, Object aDest, Object aValue) {
+    public boolean setPropMValue(Method method, Object aDest, Object aValue) throws JsonException {
         boolean result = false;
         // set accessible
         boolean oldAccessible = method.isAccessible();
         if (!oldAccessible) try {
             method.setAccessible(true);
         } catch (Exception e) {
-            XLog.onError(e, "Can't set accessible for " + method.getName());
+        	throw new JsonException("Can't set accessible for " + method.getName(), e);
         }
         // set value
         try {
             method.invoke(aDest, aValue);
             result = true;
         } catch (Exception e) {
-            XLog.onError(e, "Can't invoke'" + method.getName() + "' method with param: " + aValue);
+        	throw new JsonException("Can't invoke'" + method.getName() + "' method with param: " + aValue, e);
         }
         // restore accessible
         if ((!oldAccessible) && method.isAccessible()) {
@@ -182,16 +186,17 @@ public class XBeanAdapter implements IBeanAdapter {
      * @param opType
      * @param aValue
      * @return
+     * @throws JsonException 
      */
     @Override
-    public boolean setAttrMValue(Method method, Object aDest, int opType, String aValue) {
+    public boolean setAttrMValue(Method method, Object aDest, int opType, String aValue) throws JsonException {
         boolean result = false;
         // set accessible
         boolean oldAccessible = method.isAccessible();
         if (!oldAccessible) try {
             method.setAccessible(true);
         } catch (Exception e) {
-            XLog.onError(e, "Can't set accessible for " + method.getName());
+        	throw new JsonException("Can't set accessible for " + method.getName(), e);
         }
         // set value
         try {
@@ -249,7 +254,7 @@ public class XBeanAdapter implements IBeanAdapter {
             }
             result = true;
         } catch (Exception e) {
-            XLog.onError(e, "Can't invoke'" + method.getName() + "' method with param: " + aValue);
+        	throw new JsonException("Can't invoke'" + method.getName() + "' method with param: " + aValue, e);
         }
         // restore accessible
         if ((!oldAccessible) && method.isAccessible()) {
@@ -266,22 +271,23 @@ public class XBeanAdapter implements IBeanAdapter {
      * @param field
      * @param aDest
      * @return
+     * @throws JsonException 
      */
     @Override
-    public Object getPropValue(Field field, Object aDest) {
+    public Object getPropValue(Field field, Object aDest) throws JsonException {
         Object result = null;
 
         boolean oldAccessible = field.isAccessible();
         if (!oldAccessible) try {
             field.setAccessible(true);
         } catch (Exception e) {
-            XLog.onError(e, "Can't set accessible for " + field.getName());
+        	throw new JsonException("Can't set accessible for " + field.getName(), e);
         }
         // set value
         try {
             result = field.get(aDest);
         } catch (Exception e) {
-            XLog.onError(e, "Can't get '" + field.getName() + "' attribute value.");
+        	throw new JsonException("Can't get '" + field.getName() + "' attribute value.", e);
         }
         // restore accessible
         if ((!oldAccessible) && field.isAccessible()) {
@@ -344,7 +350,7 @@ public class XBeanAdapter implements IBeanAdapter {
      * @return
      */
     @Override
-    public int getTypeFor(Class opType) {
+    public int getTypeFor(Class<?> opType) {
         int result = TYPE_UNKNOWN;
         String name = opType.getName();
         int index = name.lastIndexOf('.');
