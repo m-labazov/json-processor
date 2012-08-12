@@ -355,7 +355,6 @@ public class XBeanAdapter implements IBeanAdapter {
         String name = opType.getName();
         int index = name.lastIndexOf('.');
         if (index > 0) {
-            // process java.xxxx.XXX classes
             if ((name.charAt(0) == 'j') && (index == 9)) {
                 char ch = name.charAt(10);
                 int ilen = name.length();

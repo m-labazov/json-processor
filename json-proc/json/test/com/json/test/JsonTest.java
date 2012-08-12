@@ -1,15 +1,30 @@
 package com.json.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 
-import com.json.test.entity.*;
-import com.maestro.xml.*;
-import com.maestro.xml.json.*;
-import com.maestro.xml.json.resolver.*;
+import com.json.test.entity.EnumEntity;
+import com.json.test.entity.JArrayEntity;
+import com.json.test.entity.JCar;
+import com.json.test.entity.JDateEntity;
+import com.json.test.entity.JDepartment;
+import com.json.test.entity.JDetailPerson;
+import com.json.test.entity.JEnumEntity;
+import com.json.test.entity.JPerson;
+import com.json.test.entity.JPrimitiveEntity;
+import com.json.test.entity.JStringEntity;
+import com.maestro.xml.IBeanProcessor;
+import com.maestro.xml.JsonException;
+import com.maestro.xml.json.CustomBeanProcessor;
 
 public class JsonTest {
 
@@ -21,20 +36,7 @@ public class JsonTest {
 	}
 	
 	private IBeanProcessor getProcessor() {
-		List<IBeanResolver> beanResolvers = new ArrayList<IBeanResolver>();
-		beanResolvers.add(new PolymorphismBeanResolver());
-		beanResolvers.add(new SimpleBeanResolver());
-		IBeanResolver beanResolver = new CompositeBeanResolver(beanResolvers);
-		
-		List<IFieldResolver> fieldResolvers = new ArrayList<IFieldResolver>();
-		fieldResolvers.add(new PrimitiveFieldResolver());
-		fieldResolvers.add(new SimpleDateFieldResolver("dd.MMM.yyyy"));
-		fieldResolvers.add(new EnumFieldResolver());
-		IFieldResolver fieldRslover = new CompositeFieldResolver(fieldResolvers);
-		
-		IBeanAdapter adapter = XBeanAdapter.getInstance();
-		IBeanProcessor beanProcessor = new CustomBeanProcessor(beanResolver, adapter, fieldRslover);
-		
+		IBeanProcessor beanProcessor = new CustomBeanProcessor();
 		return beanProcessor;
 	}
 	

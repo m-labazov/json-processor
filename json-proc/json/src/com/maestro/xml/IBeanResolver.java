@@ -1,6 +1,5 @@
 package com.maestro.xml;
 
-import java.util.Map;
 
 @SuppressWarnings("rawtypes")
 public interface IBeanResolver {
@@ -9,6 +8,6 @@ public interface IBeanResolver {
 	
 	IBeanInfo getBean(Class beanClass, String json) throws JsonException;
 
-	void setInfos(Map<Class, IBeanInfo> infos);
+	void setBeanContext(IBeanContext context);
 	
 }

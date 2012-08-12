@@ -1,26 +1,38 @@
 package com.maestro.xml.json.resolver;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import com.maestro.xml.IBeanContext;
 import com.maestro.xml.IBeanInfo;
 import com.maestro.xml.IBeanResolver;
 import com.maestro.xml.JsonException;
+import com.maestro.xml.json.DefaultBeanContext;
 import com.maestro.xml.json.JsonBeanInfo;
 
 @SuppressWarnings("rawtypes")
-public class CompositeBeanResolver implements IBeanResolver {
+public class CompositeBeanResolver extends AbstractBeanResolver {
 
 	private List<IBeanResolver> resolvers;
-	private Map<Class, IBeanInfo> beanInfos;
+	private IBeanContext beanContext;
+	
+	public CompositeBeanResolver() {
+		init();
+		resolvers.add(new PolymorphismBeanResolver());
+		resolvers.add(new SimpleBeanResolver());
+		initResolvers();
+	}
+
+	protected void init() {
+		resolvers = new ArrayList<IBeanResolver>();
+		beanContext = new DefaultBeanContext();
+	}
 	
 	public CompositeBeanResolver(List<IBeanResolver> resolvers) {
-		beanInfos = new HashMap<Class, IBeanInfo>();
+		init();
 		setResolvers(resolvers);
 	}
 	
-	@Override
 	public IBeanInfo getBean(Class beanClass) throws JsonException {
 		return getBean(beanClass, null);
 	}
@@ -45,23 +57,26 @@ public class CompositeBeanResolver implements IBeanResolver {
 
 	protected JsonBeanInfo addBeanInfo(Class beanClass) {
 		JsonBeanInfo result = null;
-		if (!beanInfos.containsKey(beanClass)) {
+		if (!beanContext.containsBeanInfo(beanClass)) {
 			result = new JsonBeanInfo(beanClass);
-			beanInfos.put(beanClass, result);
+			beanContext.addBeanInfo(result);
 		}
 		return result;
 	}
 
 	@Override
-	public void setInfos(Map<Class, IBeanInfo> infos) {
-		this.beanInfos = infos;
-
+	public void setBeanContext(IBeanContext context) {
+		this.beanContext = context;
 	}
 
 	public void setResolvers(List<IBeanResolver> resolvers) {
 		this.resolvers = resolvers;
-		for (IBeanResolver resolver : resolvers) {
-			resolver.setInfos(beanInfos);
+		initResolvers();
+	}
+
+	private void initResolvers() {
+		for (IBeanResolver resolver : this.resolvers) {
+			resolver.setBeanContext(beanContext);
 		}
 	}
 

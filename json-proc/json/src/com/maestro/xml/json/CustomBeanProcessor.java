@@ -17,17 +17,28 @@ import com.maestro.xml.JsonException;
 import com.maestro.xml.json.builder.JsonArray;
 import com.maestro.xml.json.builder.JsonObject;
 import com.maestro.xml.json.builder.JsonStringer;
+import com.maestro.xml.json.resolver.CompositeBeanResolver;
+import com.maestro.xml.json.resolver.CompositeFieldResolver;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class CustomBeanProcessor implements IBeanProcessor {
 	
-	// TODO destroy XLog
-
 	private IBeanResolver beanResolver;
 	private IBeanAdapter adapter;
 	private IFieldResolver fieldResolver;
 	
+	public CustomBeanProcessor() {
+		IBeanResolver beanResolver = new CompositeBeanResolver();
+		IFieldResolver fieldRslover = new CompositeFieldResolver();
+		IBeanAdapter adapter = XBeanAdapter.getInstance();
+		init(beanResolver, adapter, fieldRslover);
+	}
+	
 	public CustomBeanProcessor(IBeanResolver beanResolver, IBeanAdapter adapter, IFieldResolver fieldResolver) {
+		init(beanResolver, adapter, fieldResolver);
+	}
+
+	protected void init(IBeanResolver beanResolver, IBeanAdapter adapter, IFieldResolver fieldResolver) {
 		this.beanResolver = beanResolver;
 		this.adapter = adapter;
 		this.fieldResolver = fieldResolver;
@@ -103,7 +114,7 @@ public class CustomBeanProcessor implements IBeanProcessor {
 		IBeanInfo beanInfo = beanResolver.getBean(beanClass, jObject.toString());
 
 		// Attributes processing
-		T bean = JsonProcessorUtil.initializeBean(beanClass);
+		T bean = (T) JsonProcessorUtil.initializeBean(beanInfo.getBeanClass());
 		if (bean != null) {
 			for (Field field : beanInfo.getAttrs()) {
             	String fieldName = getFieldName(field);

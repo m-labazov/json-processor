@@ -8,25 +8,24 @@ import java.util.List;
 import java.util.Map;
 
 import com.maestro.xml.IBeanInfo;
-import com.maestro.xml.IBeanResolver;
 import com.maestro.xml.JsonException;
 import com.maestro.xml.json.JsonBeanInfo;
 import com.maestro.xml.json.JsonProcessorUtil;
 import com.maestro.xml.json.builder.JsonObject;
 
 @SuppressWarnings("rawtypes")
-public class PolymorphismBeanResolver implements IBeanResolver {
+public class PolymorphismBeanResolver extends AbstractBeanResolver {
 
-	private Map<Class, IBeanInfo> beanInfos;
-	
 	@Override
 	public JsonBeanInfo getBean(Class beanClass) {
+		// TODO check this place (possibly throw exception)
 		return null;
 	}
 
 	@Override
 	public IBeanInfo getBean(Class beanClass, String json) throws JsonException {
 		if (json == null || json.isEmpty()) {
+			// TODO throw exception
 			return null;
 		}
 		
@@ -71,18 +70,13 @@ public class PolymorphismBeanResolver implements IBeanResolver {
 	protected List<IBeanInfo> getRelatedBeanInfos(Class beanClass) {
 		List<IBeanInfo> relatedInfos = new ArrayList<IBeanInfo>();
 		
-		for (Map.Entry<Class, IBeanInfo> entry : beanInfos.entrySet()) {
+		for (Map.Entry<Class<?>, IBeanInfo> entry : beanContext.getBeanInfos().entrySet()) {
 			if (beanClass.isAssignableFrom(entry.getKey())) {
 				relatedInfos.add(entry.getValue());
 			}
 		}
 		
 		return relatedInfos;
-	}
-
-	@Override
-	public void setInfos(Map<Class, IBeanInfo> infos) {
-		this.beanInfos = infos;
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.maestro.xml.json.resolver;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.maestro.xml.IFieldResolver;
@@ -9,8 +10,23 @@ public class CompositeFieldResolver implements IFieldResolver {
 
 	private List<IFieldResolver> resolvers;
 	
+	public CompositeFieldResolver() {
+		init();
+	}
+
+	private void init() {
+		resolvers = new ArrayList<IFieldResolver>();
+		resolvers.add(new PrimitiveFieldResolver());
+		resolvers.add(new SimpleDateFieldResolver("dd.MMM.yyyy"));
+		resolvers.add(new EnumFieldResolver());
+	}
+	
 	public CompositeFieldResolver(List<IFieldResolver> resolvers) {
 		this.resolvers = resolvers;
+	}
+	
+	public void addFieldResolver(IFieldResolver resolver) {
+		resolvers.add(resolver);
 	}
 	
 	@Override
@@ -19,12 +35,10 @@ public class CompositeFieldResolver implements IFieldResolver {
 		
 		for (IFieldResolver resolver : resolvers) {
 			result = resolver.convertToObject(beanClass, value);
-			
 			if (result != null) {
 				break;
 			}
 		}
-		
 		return result ;
 	}
 
