@@ -1,6 +1,6 @@
 package com.json.test.entity;
 
-import com.maestro.xml.json.JsonElement;
+import com.maestro.json.JsonElement;
 
 public class JPrimitiveEntity {
 

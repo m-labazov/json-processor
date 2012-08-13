@@ -22,9 +22,10 @@ import com.json.test.entity.JEnumEntity;
 import com.json.test.entity.JPerson;
 import com.json.test.entity.JPrimitiveEntity;
 import com.json.test.entity.JStringEntity;
-import com.maestro.xml.IBeanProcessor;
-import com.maestro.xml.JsonException;
-import com.maestro.xml.json.CustomBeanProcessor;
+import com.maestro.json.IBeanProcessor;
+import com.maestro.json.JsonException;
+import com.maestro.json.impl.AnnotationBeanInfoFactory;
+import com.maestro.json.impl.CustomBeanProcessor;
 
 public class JsonTest {
 
@@ -36,7 +37,8 @@ public class JsonTest {
 	}
 	
 	private IBeanProcessor getProcessor() {
-		IBeanProcessor beanProcessor = new CustomBeanProcessor();
+		CustomBeanProcessor beanProcessor = new CustomBeanProcessor();
+		beanProcessor.setBeanFactory(new AnnotationBeanInfoFactory());
 		return beanProcessor;
 	}
 	

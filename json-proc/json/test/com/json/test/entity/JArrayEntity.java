@@ -2,7 +2,7 @@ package com.json.test.entity;
 
 import java.util.List;
 
-import com.maestro.xml.json.JsonElement;
+import com.maestro.json.JsonElement;
 
 
 public class JArrayEntity {
