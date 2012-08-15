@@ -7,6 +7,11 @@ import com.maestro.json.JsonException;
 
 public class XmlBeanInfoFactory extends AbstractBeanInfoFactory {
 
+	public XmlBeanInfoFactory() throws Exception {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	@SuppressWarnings("unused")
 	private List<String> xmlMappingPathes;
 	

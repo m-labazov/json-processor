@@ -12,13 +12,15 @@ public abstract class AbstractBeanInfoFactory implements IBeanInfoFactory {
 	protected IBeanInfoContext context;
 	protected IBeanResolver resolver;
 	
-	public AbstractBeanInfoFactory() {
+	// TODO think about method throws exception
+	public AbstractBeanInfoFactory() throws Exception {
 		context = new DefaultBeanContext();
 		resolver = new CompositeBeanResolver();
 		resolver.setBeanContext(context);
+		initializeContext();
 	}
 	
-	protected abstract void initializeContext();
+	protected abstract void initializeContext() throws Exception;
 	protected abstract IBeanInfo initializeBean(Class<?> beanClass) throws JsonException ;
 	
 	@Override

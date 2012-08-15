@@ -38,7 +38,11 @@ public class JsonTest {
 	
 	private IBeanProcessor getProcessor() {
 		CustomBeanProcessor beanProcessor = new CustomBeanProcessor();
-		beanProcessor.setBeanFactory(new AnnotationBeanInfoFactory());
+		try {
+			beanProcessor.setBeanFactory(new AnnotationBeanInfoFactory());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return beanProcessor;
 	}
 	
