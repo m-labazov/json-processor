@@ -17,8 +17,8 @@ public abstract class AbstractBeanInfoFactory implements IBeanInfoFactory {
 		context = new DefaultBeanContext();
 		resolver = new CompositeBeanResolver();
 		resolver.setBeanContext(context);
-		initializeContext();
 	}
+	
 	
 	protected abstract void initializeContext() throws Exception;
 	protected abstract IBeanInfo initializeBean(Class<?> beanClass) throws JsonException ;

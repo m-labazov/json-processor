@@ -22,6 +22,8 @@ import com.json.test.entity.JEnumEntity;
 import com.json.test.entity.JPerson;
 import com.json.test.entity.JPrimitiveEntity;
 import com.json.test.entity.JStringEntity;
+import com.json.test.entity.scan.TestClassC;
+import com.json.test.entity.scan.pack.TestClassA;
 import com.maestro.json.IBeanProcessor;
 import com.maestro.json.JsonException;
 import com.maestro.json.impl.AnnotationBeanInfoFactory;
@@ -39,7 +41,8 @@ public class JsonTest {
 	private IBeanProcessor getProcessor() {
 		CustomBeanProcessor beanProcessor = new CustomBeanProcessor();
 		try {
-			beanProcessor.setBeanFactory(new AnnotationBeanInfoFactory());
+			AnnotationBeanInfoFactory beanFactory = new AnnotationBeanInfoFactory("com.json.test.entity.scan");
+			beanProcessor.setBeanFactory(beanFactory);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -326,7 +329,25 @@ public class JsonTest {
 		JStringEntity resultEntity = result.getEntity();
 		assertNotNull(resultEntity);
 		assertEquals(stringEntity.getStr2(), resultEntity.getStr2());
+	}
+	
+	@Test
+	// TODO add jar test
+	public void annotationFactoryTest() throws JsonException {
+		String value1 = "abc";
+		int value2 = 123;
+		String value3 = "ghi";
+		String json = "{\"fieldC\": \"" + value1  + "\", " +
+				"\"classA\":{\"fieldA\":\"" + value2  + "\", \"fieldB\":\"" + value3  + "\"}}";
 		
+		TestClassC result = processor.deserialize(TestClassC.class, json);
 		
+		assertNotNull(result);
+		assertEquals(value1, result.getFieldC());
+		
+		TestClassA classA = result.getClassA();
+		assertNotNull(classA);
+		assertEquals(value2, classA.getFieldA());
+		assertEquals(value3, classA.getFieldB());
 	}
 }

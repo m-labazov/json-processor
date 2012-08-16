@@ -1,15 +1,11 @@
 package com.maestro.json.impl;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,8 +15,11 @@ import com.maestro.json.JsonElement;
 
 public class AnnotationBeanInfoFactory extends AbstractBeanInfoFactory {
 
-	public AnnotationBeanInfoFactory() throws Exception {
-		super();
+	public AnnotationBeanInfoFactory() throws Exception {}
+	
+	public AnnotationBeanInfoFactory(String beanInfoPackegeScan) throws Exception {
+		setBeanInfoPackegeScan(beanInfoPackegeScan);
+		initializeContext();
 	}
 
 	private List<String> beanInfoPackegeScan; 
@@ -36,7 +35,10 @@ public class AnnotationBeanInfoFactory extends AbstractBeanInfoFactory {
 			classes.addAll(ClassScanUtil.getClasses(beanPackage));
 		}
 		for (Class<?> clazz : classes) {
-			initializeBean(clazz);
+			IBeanInfo initializedBean = initializeBean(clazz);
+			if (initializedBean != null) {
+				context.addBeanInfo(initializedBean);
+			}
 		}
 	}
 	
@@ -49,12 +51,16 @@ public class AnnotationBeanInfoFactory extends AbstractBeanInfoFactory {
         	JsonElement annotation = field.getAnnotation(JsonElement.class);
 
             if (annotation != null) {
-            	attrs .put(field, annotation);
+            	attrs.put(field, annotation);
             }
         }
 
-		IBeanInfo result = new JsonBeanInfo(beanClass, attrs);
-		return result;
+		if (!attrs.isEmpty()) {
+			IBeanInfo result = new JsonBeanInfo(beanClass, attrs);
+			return result;
+		} else {
+			return null;
+		}
 	}
     
     public Collection<Field> getFields(Class<?> classDesc) {
@@ -68,5 +74,17 @@ public class AnnotationBeanInfoFactory extends AbstractBeanInfoFactory {
 		return fields;
 	}
 
+	public List<String> getBeanInfoPackegeScan() {
+		return beanInfoPackegeScan;
+	}
 
+	public void setBeanInfoPackegeScan(List<String> beanInfoPackegeScan) {
+		this.beanInfoPackegeScan = beanInfoPackegeScan;
+	}
+
+	public void setBeanInfoPackegeScan(String beanInfoPackegeScan) {
+		ArrayList<String> packages = new ArrayList<String>();
+		packages.add(beanInfoPackegeScan);
+		setBeanInfoPackegeScan(packages);
+	}
 }
