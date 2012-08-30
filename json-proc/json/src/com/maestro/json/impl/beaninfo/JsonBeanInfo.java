@@ -1,4 +1,4 @@
-package com.maestro.json.impl;
+package com.maestro.json.impl.beaninfo;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -10,20 +10,20 @@ import com.maestro.json.JsonElement;
 
 public class JsonBeanInfo implements IBeanInfo {
 
-    private Class<?> beanClass;
-    private Map<Field, JsonElement> attrs = new HashMap<Field, JsonElement>();
+	private Class<?> beanClass;
+	private Map<Field, JsonElement> attrs = new HashMap<Field, JsonElement>();
 
-    public JsonBeanInfo(Class<?> beanClass, Map<Field, JsonElement> attrs) {
-    	this.beanClass = beanClass;
-    	this.attrs = attrs;
-    }
+	public JsonBeanInfo(Class<?> beanClass, Map<Field, JsonElement> attrs) {
+		this.beanClass = beanClass;
+		this.attrs = attrs;
+	}
 
-    @Override
-    public Collection<Field> getAttrs() {
-        return attrs.keySet();
-    }
+	@Override
+	public Collection<Field> getAttrs() {
+		return attrs.keySet();
+	}
 
-    @Override
+	@Override
 	public Class<?> getBeanClass() {
 		return beanClass;
 	}

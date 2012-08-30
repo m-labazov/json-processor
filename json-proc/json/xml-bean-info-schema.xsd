@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="xmlBeanInfoDefinition" type="xmlBeanInfoDefinition"/>
+
+  <xs:element name="xmlBeanInfoDefinitions" type="xmlBeanInfoDefinitions"/>
+
+  <xs:element name="xmlFieldDefinition" type="xmlFieldDefinition"/>
+
+  <xs:complexType name="xmlBeanInfoDefinition">
+    <xs:sequence>
+      <xs:element name="field" type="xmlFieldDefinition" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="beanClass" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="xmlFieldDefinition">
+    <xs:sequence/>
+    <xs:attribute name="field" type="xs:string" use="required"/>
+    <xs:attribute name="attribute" type="xs:string" use="required"/>
+    <xs:attribute name="pcData" type="xs:boolean" use="optional" default="false"/>
+    <xs:attribute name="stringValue" type="xs:boolean" use="optional" default="false"/>
+  </xs:complexType>
+
+  <xs:complexType name="xmlBeanInfoDefinitions">
+    <xs:sequence>
+      <xs:element name="beanInfo" type="xmlBeanInfoDefinition" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+

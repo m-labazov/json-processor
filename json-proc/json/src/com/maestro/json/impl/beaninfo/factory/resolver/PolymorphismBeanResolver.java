@@ -1,4 +1,4 @@
-package com.maestro.json.impl.resolver;
+package com.maestro.json.impl.beaninfo.factory.resolver;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -8,8 +8,8 @@ import java.util.List;
 
 import com.maestro.json.IBeanInfo;
 import com.maestro.json.JsonException;
-import com.maestro.json.impl.JsonBeanInfo;
 import com.maestro.json.impl.JsonProcessorUtil;
+import com.maestro.json.impl.beaninfo.JsonBeanInfo;
 import com.maestro.json.impl.builder.JsonObject;
 
 @SuppressWarnings("rawtypes")

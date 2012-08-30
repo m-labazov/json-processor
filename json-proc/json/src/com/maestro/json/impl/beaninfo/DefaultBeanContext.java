@@ -1,4 +1,4 @@
-package com.maestro.json.impl;
+package com.maestro.json.impl.beaninfo;
 
 import java.util.ArrayList;
 import java.util.List;

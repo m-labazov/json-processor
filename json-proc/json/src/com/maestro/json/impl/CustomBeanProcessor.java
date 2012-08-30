@@ -14,10 +14,10 @@ import com.maestro.json.IBeanInfoFactory;
 import com.maestro.json.IBeanProcessor;
 import com.maestro.json.IFieldResolver;
 import com.maestro.json.JsonException;
+import com.maestro.json.impl.beaninfo.factory.resolver.CompositeFieldResolver;
 import com.maestro.json.impl.builder.JsonArray;
 import com.maestro.json.impl.builder.JsonObject;
 import com.maestro.json.impl.builder.JsonStringer;
-import com.maestro.json.impl.resolver.CompositeFieldResolver;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class CustomBeanProcessor implements IBeanProcessor {

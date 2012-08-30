@@ -26,8 +26,8 @@ import com.json.test.entity.scan.TestClassC;
 import com.json.test.entity.scan.pack.TestClassA;
 import com.maestro.json.IBeanProcessor;
 import com.maestro.json.JsonException;
-import com.maestro.json.impl.AnnotationBeanInfoFactory;
 import com.maestro.json.impl.CustomBeanProcessor;
+import com.maestro.json.impl.beaninfo.factory.AnnotationBeanInfoFactory;
 
 public class JsonTest {
 

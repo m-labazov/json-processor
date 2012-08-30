@@ -1,4 +1,4 @@
-package com.maestro.json.impl.resolver;
+package com.maestro.json.impl.beaninfo.factory.resolver;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

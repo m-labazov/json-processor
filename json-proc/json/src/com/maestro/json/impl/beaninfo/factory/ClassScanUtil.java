@@ -1,4 +1,4 @@
-package com.maestro.json.impl;
+package com.maestro.json.impl.beaninfo.factory;
 
 import java.io.File;
 import java.io.FileInputStream;
